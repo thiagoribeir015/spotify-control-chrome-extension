@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Spotify Web Player Control</title>
+
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <script src="main.js"></script>
+
+    <style type="text/css">
+	    .main {
+	    	flex-direction: column;
+	    	align-items: center; 
+	    	margin: 10px;
+	    }
+
+		.bs-callout {
+		    padding: 10px;
+		    margin: 10px 0;
+		    border: 1px solid #eee;
+		    border-left-width: 5px;
+		    border-radius: 3px;
+		}
+
+		.bs-callout-info {
+		    border-left-color: #777;
+		}
+
+		.flex {
+			display: flex;
+		}
+    </style>
+  </head>
+
+  <body>
+  	<div class="main flex">
+
+  		<button id="open" type="button" style="margin-bottom: 10px;" class="btn btn-default">Open/Show Spotify</button>	
+  		
+  		<div class="flex btn-group" role="group" aria-label="Default button group"> 
+  			<button id="previous" type="button" class="btn btn-default">
+  				<span class="glyphicon glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+  			</button> 
+
+  			<button id="play-pause" type="button" class="btn btn-default">
+  				<span class="glyphicon glyphicon glyphicon-play" aria-hidden="true"></span> Play/Pause
+  			</button> 
+
+  			<button id="next" type="button" class="btn btn-default">
+  				<span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+  			</button> 
+  		</div>
+
+  		<div class="bs-callout bs-callout-info" id="callout-alerts-dismiss-plugin"> 
+  			<p style="color:#777"> Current track:</p> 
+  			<h4 id="current-track-name">No track info avaliable.</h4>
+  		</div>
+
+  		<div id="album-art"></div>
+
+  	</div>    
+  </body>
+</html>
