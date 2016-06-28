@@ -2,14 +2,12 @@
   "manifest_version": 2,
   "name": "Spotify Web Player Control",
   "description": "This extension will help you to control your current Spotify Web Player",
-  "version": "1.0",
+  "version": "1.0.0",
 
   "browser_action": {
    "default_icon": "assets/icon.png",
    "default_popup": "main.html"
   },
-  /*"permissions": [
-    "activeTab"
-  ]*/
+
   "permissions": [ "https://play.spotify.com/*" ]
 }
