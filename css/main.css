@@ -1,0 +1,76 @@
+.flex {
+  display: flex;
+}
+
+.main {
+  flex-direction: column;
+  align-items: center;
+  margin: 10px;
+}
+
+.logo {
+  height: 34px;
+}
+
+.logo > img {
+  height: 83%;
+  cursor: pointer;
+}
+
+.album {
+  width: 200px;
+  height: 200px;
+  background-color: #F4F4F4;
+}
+
+.track {
+  min-height: 50px;
+  direction: ltr;
+  padding: 18px 0 15px 0;
+  overflow: hidden;
+  text-align: center;
+}
+
+.controller {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-self: center;
+  padding: 0 20px 20px 20px;
+}
+
+.controller__skip-back {
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.controller__skip-back > .glyphicon {
+  cursor: pointer;
+}
+
+.controller__skip-back.disabled > .glyphicon {
+  color: #7B7B7B;
+  cursor: not-allowed;
+}
+
+.controller__play-pause {
+  width: 54px;
+  font-size: 24px;
+  border-radius: 300px;
+  padding: 10px 10px;
+  outline: 0!important;
+}
+
+.disabled {
+  color: #7B7B7B;
+  cursor: not-allowed;
+}
+
+.green {
+  color: #84BD00!important;
+}
+
+button:focus {
+  outline:0;
+}
