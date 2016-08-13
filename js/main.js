@@ -93,32 +93,62 @@ function fetchTrackArtist(tab, callback) {
 	}, callback);
 }
 
-function fetchPlayPauseClassNames(tab, callback) {
+function fetchClassNamesById(tab, id, callback) {
 	chrome.tabs.executeScript(tab, {
-		code: APP_PLAYER + '.getElementById("play-pause").className;'
+		code: APP_PLAYER + '.getElementById("' + id + '").className;'
+	}, function (response) {
+		var classNamesList = String(response).split(" ");
+		var classNamesObject = {};
+
+		classNamesList.forEach(function (className) {
+			classNamesObject[className] = true;
+		});
+
+		callback(classNamesObject);
+	});
+}
+
+function fetchControlState(tab, control, callback) {
+	fetchClassNamesById(tab, control, function (response) {
+		var state = "active";
+
+		if (response.disabled) {
+			state = "disabled";
+		}
+
+		callback(control, state);
+	});
+}
+
+function fetchPreviousControlState(tab, callback) {
+	fetchClassNamesById(tab, "previous", function (response) {
+		var state = "active";
+
+		if (response.disabled) {
+			state = "disabled";
+		}
+
+		return state;
+	});
+}
+
+function fetchNextControlState(tab, callback) {
+	chrome.tabs.executeScript(tab, {
+		code: APP_PLAYER + '.getElementById("next").className;'
 	}, callback);
 }
 
 function fetchPlayPauseState(tab, callback) {
-	fetchPlayPauseClassNames(tab, function (classNames) {
-		if (classNames) {
-			var classNamesList = String(classNames).split(" ");
-			var state = "paused";
+	fetchClassNamesById(tab, "play-pause", function (classNames) {
+		var state = "paused";
 
-			classNamesList.forEach(function (className) {
-				if (className === "playing") {
-					state = "playing";
-
-					return;
-				} else if (className === "disabled") {
-					state = "disabled"
-
-					return;
-				}
-			});
-
-			callback(state);
+		if (classNames.playing) {
+			state = "playing";
+		} else if (classNames.disabled) {
+			state = "disabled"
 		}
+
+		callback(state);
 	});
 }
 
@@ -134,18 +164,31 @@ function renderTrackArtist(artist) {
 	document.querySelector('#current-track-artist').innerHTML = artist;
 }
 
+function renderControlState(control, state) {
+	var controlClassName = "controller__skip-back";
+
+	if (state === "disabled") {
+		controlClassName += " disabled";
+	}
+
+	document.getElementById(control).className  = controlClassName;
+}
+
 function renderPlayPauseState(state) {
 	var playPauseState = '';
 
 	switch (state) {
 		case "playing":
 			playPauseState = '<span class="glyphicon glyphicon glyphicon-pause"></span>';
+			document.getElementById("play-pause").removeAttribute("disabled", true );
 			break;
 		case "paused":
 			playPauseState = '<span class="glyphicon glyphicon glyphicon-play"></span>';
+			document.getElementById("play-pause").removeAttribute("disabled", true );
 			break;
 		case "disabled":
-			playPauseState = '<span class="glyphicon glyphicon glyphicon-remove"></span>'
+			playPauseState = '<span class="glyphicon glyphicon glyphicon-play"></span>';
+			document.getElementById("play-pause").setAttribute("disabled", true );
 	}
 
 	document.querySelector('#play-pause').innerHTML = playPauseState;
@@ -154,11 +197,10 @@ function renderPlayPauseState(state) {
  * Show current trackname if there's one;
  */
 function updateTrackInfo(){
-	getCurrentTab(function(tabs){
+	getCurrentTab(function(tabs) {
 
 		if (tabs.length === 0) {
-	      	//chrome.tabs.create({url: ALBUMS_URL});
-	      	document.querySelector('#album-art').innerHTML = "";
+	    document.querySelector('#album-art').innerHTML = "";
 	  } else {
 			for (var tab of tabs) {
 				fetchAlbumArt(tab.id, function (response) {
@@ -177,9 +219,10 @@ function updateTrackInfo(){
 					}
 				});
 
-				fetchPlayPauseState(tab.id, function (response) {
-					renderPlayPauseState(response);
-				});
+				fetchControlState(tab.id, "previous", renderControlState);
+				fetchControlState(tab.id, "next", renderControlState);
+
+				fetchPlayPauseState(tab.id, renderPlayPauseState);
 		  }
 		}
 	});

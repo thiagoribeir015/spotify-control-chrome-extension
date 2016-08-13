@@ -49,9 +49,23 @@
   cursor: pointer;
 }
 
+.controller__skip-back.disabled > .glyphicon {
+  color: #7B7B7B;
+  cursor: not-allowed;
+}
+
 .controller__play-pause {
   width: 54px;
   font-size: 24px;
   border-radius: 300px;
   padding: 10px 10px;
+}
+
+.disabled {
+  color: #7B7B7B;
+  cursor: not-allowed;
+}
+
+.green {
+  color: #84BD00!important;
 }
