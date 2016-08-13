@@ -4,59 +4,39 @@
     <title>Spotify Web Player Control</title>
 
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-    <script src="main.js"></script>
-
-    <style type="text/css">
-	    .main {
-	    	flex-direction: column;
-	    	align-items: center; 
-	    	margin: 10px;
-	    }
-
-		.bs-callout {
-		    padding: 10px;
-		    margin: 10px 0;
-		    border: 1px solid #eee;
-		    border-left-width: 5px;
-		    border-radius: 3px;
-		}
-
-		.bs-callout-info {
-		    border-left-color: #777;
-		}
-
-		.flex {
-			display: flex;
-		}
-    </style>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script src="js/main.js"></script>
   </head>
 
   <body>
   	<div class="main flex">
 
-  		<button id="open" type="button" style="margin-bottom: 10px;" class="btn btn-default">Open/Show Spotify</button>	
-  		
-  		<div class="flex btn-group" role="group" aria-label="Default button group"> 
-  			<button id="previous" type="button" class="btn btn-default">
-  				<span class="glyphicon glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-  			</button> 
+  		<button id="open" type="button" style="margin-bottom: 10px;display:none" class="btn btn-default">Open/Show Spotify</button>
 
-  			<button id="play-pause" type="button" class="btn btn-default">
-  				<span class="glyphicon glyphicon glyphicon-play" aria-hidden="true"></span> Play/Pause
-  			</button> 
+      <div class="album" id="album-art"></div>
 
-  			<button id="next" type="button" class="btn btn-default">
-  				<span class="glyphicon glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-  			</button> 
-  		</div>
+      <div class="track" id="current-track">
+        <div class="track-name">
+          <strong id="current-track-name">--</strong>
+        </div>
+        <div class="track-artist">
+          <span id="current-track-artist">--</span>
+        </div>
+      </div>
 
-  		<div class="bs-callout bs-callout-info" id="callout-alerts-dismiss-plugin"> 
-  			<p style="color:#777"> Current track:</p> 
-  			<h4 id="current-track-name">No track info avaliable.</h4>
-  		</div>
+      <div class="controller">
+        <div class="controller__skip-back">
+          <span id="previous" class="glyphicon glyphicon-step-backward" aria-hidden="true"></span>
+        </div>
 
-  		<div id="album-art"></div>
+        <button id="play-pause" type="button" class="btn btn-default btn-lg controller__play-pause">
+          <span class="glyphicon glyphicon glyphicon-play"></span>
+        </button>
 
-  	</div>    
+        <div id="next" class="controller__skip-back">
+          <span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>
+        </div>
+      </div>
+  	</div>
   </body>
 </html>
