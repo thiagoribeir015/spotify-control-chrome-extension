@@ -3,71 +3,52 @@ var ALBUMS_URL = 'https://play.spotify.com/collection/albums';
 var APP_PLAYER = 'document.getElementById("app-player").contentDocument';
 
 document.addEventListener('DOMContentLoaded', function() {
-
 	updateTrackInfo();
 
 	// Add events to buttons;
-  	document.getElementById('open').addEventListener('click', function() {
-  		getCurrentTab(function(tabs) {
-  			// Create a spotify tab if one doesn't yet exists.
-		    if (tabs.length === 0) {
-		      	chrome.tabs.create({url: ALBUMS_URL});
-		    }
-		    else{
-		    	chrome.tabs.update(tabs[0].id, {highlighted: true});
-		    }
-  		});
-  	}, false);
+  document.getElementById('open').addEventListener('click', function() {
+  	getCurrentTab(function(tabs) {
+  		// Create a spotify tab if one doesn't yet exists.
+		  if (!tabs.length) {
+		    chrome.tabs.create({url: ALBUMS_URL});
+		  } else{
+		    chrome.tabs.update(tabs[0].id, {highlighted: true});
+		  }
+  	});
+  });
 
-  	document.getElementById('play-pause').addEventListener('click', function() {
-  		execute('play-pause');
-  	}, false);
+  document.getElementById('play-pause').addEventListener('click', function() {
+  	execute('play-pause');
+  });
 
-  	document.getElementById('previous').addEventListener('click', function() {
-  		execute('previous');
-  	}, false);
+  document.getElementById('previous').addEventListener('click', function() {
+  	execute('previous');
+  });
 
-  	document.getElementById('next').addEventListener('click', function() {
-  		execute('next');
-  	}, false);
+  document.getElementById('next').addEventListener('click', function() {
+  	execute('next');
+  });
+});
 
-}, false);
+function execute(elementId){
+	getCurrentTab(function(tabs){
+		dispatchClickToAllTabs(tabs, elementId)
 
-function filterSpotifyTab(tabs) {
-	var spotifyTab = {};
-
-	tabs.forEach(function (tab) {
-		if (tab.audible) {
-			spotifyTab = tab;
-
-			return;
-		}
+		//Update current trackname;
+		setTimeout(updateTrackInfo, 2000);
 	});
-
-	return spotifyTab;
 }
 
-function execute(action){
-	getCurrentTab(function(tabs){
-
-	    // Create a spotify tab if there's any.
-	    if (tabs.length === 0) {
-	    	chrome.tabs.create({url: ALBUMS_URL});
-	    } else {
-		    // Apply action on all spotify tabs.
-		    // get iframe 'app-player' and then find the right action button;
-		    for (var tab of tabs) {
-		      chrome.tabs.executeScript(tab.id, {
-		      	code: "document.getElementById('app-player').contentDocument.getElementById('" + action + "').click()"
-		      });
-		    }
-
-		    //Update current trackname;
-		    setTimeout(function(){
-		    	updateTrackInfo();
-		    },2000);
-	    }
+function dispatchClick(tabId, elementId) {
+	chrome.tabs.executeScript(tabId, {
+		code: APP_PLAYER + ".getElementById('" + elementId + "').click()"
 	});
+}
+
+function dispatchClickToAllTabs(tabs, elementId) {
+	tabs.forEach(function (tab) {
+		dispatchClick(tab.id, elementId);
+	})
 }
 
 function fetchAlbumArt(tab, callback) {
@@ -120,24 +101,6 @@ function fetchControlState(tab, control, callback) {
 	});
 }
 
-function fetchPreviousControlState(tab, callback) {
-	fetchClassNamesById(tab, "previous", function (response) {
-		var state = "active";
-
-		if (response.disabled) {
-			state = "disabled";
-		}
-
-		return state;
-	});
-}
-
-function fetchNextControlState(tab, callback) {
-	chrome.tabs.executeScript(tab, {
-		code: APP_PLAYER + '.getElementById("next").className;'
-	}, callback);
-}
-
 function fetchPlayPauseState(tab, callback) {
 	fetchClassNamesById(tab, "play-pause", function (classNames) {
 		var state = "paused";
@@ -175,55 +138,39 @@ function renderControlState(control, state) {
 }
 
 function renderPlayPauseState(state) {
-	var playPauseState = '';
+	var playPauseDOM = document.getElementById("play-pause");
+	var playPauseClassName = 'glyphicon glyphicon-play';
 
 	switch (state) {
 		case "playing":
-			playPauseState = '<span class="glyphicon glyphicon glyphicon-pause"></span>';
-			document.getElementById("play-pause").removeAttribute("disabled", true );
+			playPauseClassName = 'glyphicon glyphicon-pause';
+			playPauseDOM.removeAttribute("disabled", true );
 			break;
 		case "paused":
-			playPauseState = '<span class="glyphicon glyphicon glyphicon-play"></span>';
-			document.getElementById("play-pause").removeAttribute("disabled", true );
+			playPauseDOM.removeAttribute("disabled", true );
 			break;
 		case "disabled":
-			playPauseState = '<span class="glyphicon glyphicon glyphicon-play"></span>';
-			document.getElementById("play-pause").setAttribute("disabled", true );
+			playPauseDOM.setAttribute("disabled", true );
 	}
 
-	document.querySelector('#play-pause').innerHTML = playPauseState;
+	playPauseDOM.getElementsByTagName("span")[0].className = playPauseClassName;
 }
+
 /**
  * Show current trackname if there's one;
  */
-function updateTrackInfo(){
+function updateTrackInfo() {
 	getCurrentTab(function(tabs) {
+		for (var tab of tabs) {
+			fetchAlbumArt(tab.id, renderAlbumArt);
 
-		if (tabs.length === 0) {
-	    document.querySelector('#album-art').innerHTML = "";
-	  } else {
-			for (var tab of tabs) {
-				fetchAlbumArt(tab.id, function (response) {
-					renderAlbumArt(response);
-				});
+			fetchTrackName(tab.id, renderTrackName);
+			fetchTrackArtist(tab.id, renderTrackArtist);
 
-				fetchTrackName(tab.id, function (response) {
-					if (response) {
-						renderTrackName(response);
-					}
-				});
+			fetchControlState(tab.id, "previous", renderControlState);
+			fetchControlState(tab.id, "next", renderControlState);
 
-				fetchTrackArtist(tab.id, function (response) {
-					if (response) {
-						renderTrackArtist(response);
-					}
-				});
-
-				fetchControlState(tab.id, "previous", renderControlState);
-				fetchControlState(tab.id, "next", renderControlState);
-
-				fetchPlayPauseState(tab.id, renderPlayPauseState);
-		  }
+			fetchPlayPauseState(tab.id, renderPlayPauseState);
 		}
 	});
 }
@@ -231,6 +178,6 @@ function updateTrackInfo(){
 /**
  * Look for tabs with url like MAIN_URL;
  */
-function getCurrentTab(successFunction){
+function getCurrentTab(successFunction) {
 	chrome.tabs.query({url: MAIN_URL}, successFunction);
 }
