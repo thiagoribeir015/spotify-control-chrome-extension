@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	// Add events to buttons;
   	document.getElementById('open').addEventListener('click', function() {
-  		getCurrentTab(function(tabs){
+  		getCurrentTab(function(tabs) {
   			// Create a spotify tab if one doesn't yet exists.
 		    if (tabs.length === 0) {
 		      	chrome.tabs.create({url: ALBUMS_URL});
@@ -32,6 +32,20 @@ document.addEventListener('DOMContentLoaded', function() {
   	}, false);
 
 }, false);
+
+function filterSpotifyTab(tabs) {
+	var spotifyTab = {};
+
+	tabs.forEach(function (tab) {
+		if (tab.audible) {
+			spotifyTab = tab;
+
+			return;
+		}
+	});
+
+	return spotifyTab;
+}
 
 function execute(action){
 	getCurrentTab(function(tabs){

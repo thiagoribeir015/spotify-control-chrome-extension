@@ -9,5 +9,5 @@
    "default_popup": "main.html"
   },
 
-  "permissions": [ "https://play.spotify.com/*" ]
+  "permissions": [ "activeTab", "tabs", "https://play.spotify.com/*" ]
 }
