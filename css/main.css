@@ -8,6 +8,15 @@
   margin: 10px;
 }
 
+.logo {
+  height: 34px;
+}
+
+.logo > img {
+  height: 83%;
+  cursor: pointer;
+}
+
 .album {
   width: 200px;
   height: 200px;
