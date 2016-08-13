@@ -1,7 +1,6 @@
 var MAIN_URL = 'https://play.spotify.com/*';
 var ALBUMS_URL = 'https://play.spotify.com/collection/albums';
 var APP_PLAYER = 'document.getElementById("app-player").contentDocument';
-//TODO: SEARCH_URL = https://play.spotify.com/search/nirvana
 
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -9,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	// Add events to buttons;
   	document.getElementById('open').addEventListener('click', function() {
-
   		getCurrentTab(function(tabs){
   			// Create a spotify tab if one doesn't yet exists.
 		    if (tabs.length === 0) {
@@ -36,15 +34,12 @@ document.addEventListener('DOMContentLoaded', function() {
 }, false);
 
 function execute(action){
-
 	getCurrentTab(function(tabs){
 
 	    // Create a spotify tab if there's any.
 	    if (tabs.length === 0) {
-	      	chrome.tabs.create({url: ALBUMS_URL});
-	    }
-	    else {
-
+	    	chrome.tabs.create({url: ALBUMS_URL});
+	    } else {
 		    // Apply action on all spotify tabs.
 		    // get iframe 'app-player' and then find the right action button;
 		    for (var tab of tabs) {
@@ -57,84 +52,121 @@ function execute(action){
 		    setTimeout(function(){
 		    	updateTrackInfo();
 		    },2000);
-
-		    // Unload background page as soon as we're done.
-		    //window.close();
 	    }
 	});
 }
 
-function getAppPlayerItem() {
+function fetchAlbumArt(tab, callback) {
+	chrome.tabs.executeScript(tab, {
+		code: APP_PLAYER + '.getElementById("cover-art").querySelector(".sp-image-img").style.backgroundImage;'
+	},
+	function(response) {
+		var albumArt = response[0].replace('url(','').replace(')','');
 
+		callback(albumArt);
+	});
 }
 
+function fetchTrackName(tab, callback) {
+	chrome.tabs.executeScript(tab, {
+		code: APP_PLAYER + '.getElementById("track-name").getElementsByTagName("a")[0].innerHTML;'
+	}, callback);
+}
+
+function fetchTrackArtist(tab, callback) {
+	chrome.tabs.executeScript(tab, {
+		code: APP_PLAYER + '.getElementById("track-artist").getElementsByTagName("a")[0].innerHTML;'
+	}, callback);
+}
+
+function fetchPlayPauseClassNames(tab, callback) {
+	chrome.tabs.executeScript(tab, {
+		code: APP_PLAYER + '.getElementById("play-pause").className;'
+	}, callback);
+}
+
+function fetchPlayPauseState(tab, callback) {
+	fetchPlayPauseClassNames(tab, function (classNames) {
+		if (classNames) {
+			var classNamesList = String(classNames).split(" ");
+			var state = "paused";
+
+			classNamesList.forEach(function (className) {
+				if (className === "playing") {
+					state = "playing";
+
+					return;
+				} else if (className === "disabled") {
+					state = "disabled"
+
+					return;
+				}
+			});
+
+			callback(state);
+		}
+	});
+}
+
+function renderAlbumArt(albumArtURL) {
+	document.querySelector('#album-art').innerHTML = '<img src=' + albumArtURL + ' style="width:200px; height:200px;">';
+}
+
+function renderTrackName(name) {
+	document.querySelector('#current-track-name').innerHTML = name;
+}
+
+function renderTrackArtist(artist) {
+	document.querySelector('#current-track-artist').innerHTML = artist;
+}
+
+function renderPlayPauseState(state) {
+	var playPauseState = '';
+
+	switch (state) {
+		case "playing":
+			playPauseState = '<span class="glyphicon glyphicon glyphicon-pause"></span>';
+			break;
+		case "paused":
+			playPauseState = '<span class="glyphicon glyphicon glyphicon-play"></span>';
+			break;
+		case "disabled":
+			playPauseState = '<span class="glyphicon glyphicon glyphicon-remove"></span>'
+	}
+
+	document.querySelector('#play-pause').innerHTML = playPauseState;
+}
 /**
  * Show current trackname if there's one;
  */
 function updateTrackInfo(){
-	// var appPlayer = document.getElementById('app-player').contentDocument;
-	// var trackName = appPlayer.getElementById('track-name').getElementsByTagName("a")[0].innerHTML;
-	// var trackArtist = appPlayer.getElementById('track-artist').getElementsByTagName("a")[0].innerHTML;
-
 	getCurrentTab(function(tabs){
 
 		if (tabs.length === 0) {
 	      	//chrome.tabs.create({url: ALBUMS_URL});
 	      	document.querySelector('#album-art').innerHTML = "";
-	    }
-	    else {
-		    //show album cover;
-		    for (var tab of tabs) {
-		      	chrome.tabs.executeScript(tab.id, {
-		      		code: APP_PLAYER + '.getElementById("cover-art").querySelector(".sp-image-img").style.backgroundImage;'
-		      	},
-		      	function(resp){
-			      	//resp[0] contains the result of code executed on target tab.id, where will be returned the background-image attribute;
-			      	var src = resp[0].replace('url(','').replace(')','');
-			      	document.querySelector('#album-art').innerHTML = '<img src='+src+' style="width:200px; height:200px;">';
-			    	});
+	  } else {
+			for (var tab of tabs) {
+				fetchAlbumArt(tab.id, function (response) {
+					renderAlbumArt(response);
+				});
 
-						chrome.tabs.executeScript(tab.id, {
-		      		code: APP_PLAYER + '.getElementById("track-name").getElementsByTagName("a")[0].innerHTML;'
-		      	},
-		      	function(resp){
-							//alert(String(resp))
-							if (resp) {//alert('""' + String(resp) + '"')
-								document.querySelector('#current-track-name').innerHTML = resp;
-							}
-			    	});
+				fetchTrackName(tab.id, function (response) {
+					if (response) {
+						renderTrackName(response);
+					}
+				});
 
-						chrome.tabs.executeScript(tab.id, {
-		      		code: APP_PLAYER + '.getElementById("track-artist").getElementsByTagName("a")[0].innerHTML;'
-		      	},
-		      	function(resp){
-							if (resp) {
-								document.querySelector('#current-track-artist').innerHTML = resp;
-							}
-			    	});
+				fetchTrackArtist(tab.id, function (response) {
+					if (response) {
+						renderTrackArtist(response);
+					}
+				});
 
-						chrome.tabs.executeScript(tab.id, {
-		      		code: 'document.getElementById("app-player").contentDocument.getElementById("play-pause").className;'
-		      	},
-		      	function(resp){
-							if (resp) {
-								var playClassNames = String(resp).split(" ");
-								var newPlayContent = '<span class="glyphicon glyphicon glyphicon-play"></span>';
-
-								playClassNames.forEach(function (className) {
-									switch (className) {
-										case "playing":
-											newPlayContent = '<span class="glyphicon glyphicon glyphicon-pause"></span>';
-											break;
-										case "disabled":
-											newPlayContent = '<span class="glyphicon glyphicon glyphicon-remove"></span>';
-									}
-								});
-
-								document.querySelector('#play-pause').innerHTML = newPlayContent;
-							}
-			    	});
-		    }
+				fetchPlayPauseState(tab.id, function (response) {
+					renderPlayPauseState(response);
+				});
+		  }
 		}
 	});
 }
@@ -143,7 +175,5 @@ function updateTrackInfo(){
  * Look for tabs with url like MAIN_URL;
  */
 function getCurrentTab(successFunction){
-
 	chrome.tabs.query({url: MAIN_URL}, successFunction);
 }
-// document.getElementById("app-player").contentDocument.getElementById("play-pause").className
