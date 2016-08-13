@@ -59,6 +59,7 @@
   font-size: 24px;
   border-radius: 300px;
   padding: 10px 10px;
+  outline: 0!important;
 }
 
 .disabled {
@@ -68,4 +69,8 @@
 
 .green {
   color: #84BD00!important;
+}
+
+button:focus {
+  outline:0;
 }

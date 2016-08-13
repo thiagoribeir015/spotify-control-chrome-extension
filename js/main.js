@@ -8,11 +8,10 @@ document.addEventListener('DOMContentLoaded', function() {
 	// Add events to buttons;
   document.getElementById('open').addEventListener('click', function() {
   	getCurrentTab(function(tabs) {
-  		// Create a spotify tab if one doesn't yet exists.
 		  if (!tabs.length) {
-		    chrome.tabs.create({url: ALBUMS_URL});
-		  } else{
-		    chrome.tabs.update(tabs[0].id, {highlighted: true});
+		    createSpotifyTab();
+		  } else {
+				showSpotifyTab(tabs);
 		  }
   	});
   });
@@ -30,6 +29,14 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
+function createSpotifyTab() {
+	chrome.tabs.create({url: ALBUMS_URL});
+}
+
+function showSpotifyTab(tabs) {
+	chrome.tabs.update(tabs[0].id, {highlighted: true});
+}
+
 function execute(elementId){
 	getCurrentTab(function(tabs){
 		dispatchClickToAllTabs(tabs, elementId)
@@ -42,6 +49,10 @@ function execute(elementId){
 function dispatchClick(tabId, elementId) {
 	chrome.tabs.executeScript(tabId, {
 		code: APP_PLAYER + ".getElementById('" + elementId + "').click()"
+	}, function () {
+		if (elementId === "play-pause") {
+			togglePlayPause();
+		}
 	});
 }
 
@@ -112,6 +123,22 @@ function fetchPlayPauseState(tab, callback) {
 		}
 
 		callback(state);
+	});
+}
+
+function togglePlayPause() {
+	getCurrentTab(function(tabs) {
+		for (var tab of tabs) {
+			fetchPlayPauseState(tab.id, function (state) {
+				var toggle = {
+					paused: "playing",
+					playing: "paused",
+					disabled: "disabled"
+				};
+
+				renderPlayPauseState(toggle[state]);
+			});
+		}
 	});
 }
 
