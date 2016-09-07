@@ -2,6 +2,14 @@
   display: flex;
 }
 
+.flex-1{
+  flex: 1;
+}
+
+.flex-2{
+  flex: 2;
+}
+
 .main {
   flex-direction: column;
   align-items: center;
@@ -69,6 +77,18 @@
 
 .green {
   color: #84BD00!important;
+}
+
+#container-lyrics {
+  overflow-y: scroll;
+  width: 350px;
+  max-height: 400px;
+  margin: 10px 10px 10px 0;
+  padding-left: 10px;
+  border-left: 3px #e1e1e1 solid;
+  white-space: pre-line;
+  text-align: center;
+  justify-content: center;
 }
 
 button:focus {

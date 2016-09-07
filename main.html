@@ -8,7 +8,7 @@
     <script src="js/main.js"></script>
   </head>
 
-  <body>
+  <body style="display:flex">
   	<div class="main flex">
       <div id="open" class="logo">
         <img src="images/spotify-logo.png">
@@ -23,6 +23,9 @@
         <div class="track-artist">
           <span id="current-track-artist"></span>
         </div>
+        <button id="show-lyrics" type="button" class="btn btn-default">
+          Show Lyrics
+        </button>
       </div>
 
       <div class="controller">
@@ -39,5 +42,7 @@
         </div>
       </div>
   	</div>
+
+    <div id="container-lyrics" style="display:none"></div>
   </body>
 </html>
