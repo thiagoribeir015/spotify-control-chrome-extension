@@ -25,6 +25,7 @@
 
 .logo {
   height: 40px;
+  cursor: pointer;
   width: 134px;
   background-size: cover !important;
   margin: 10px 0;
@@ -239,6 +240,7 @@
 }
 
 .dark #container-lyrics {
+  font: 12px/1.42 'Lucida Grande', Tahoma, sans-serif;
   overflow-y: scroll;
   width: 350px;
   max-height: 438px;
@@ -251,6 +253,7 @@
 }
 
 .light #container-lyrics {
+  font: 12px/1.42 'Lucida Grande', Tahoma, sans-serif;
   overflow-y: scroll;
   width: 350px;
   max-height: 438px;
