@@ -28,6 +28,7 @@
   width: 134px;
   background-size: cover !important;
   margin: 10px 0;
+  cursor: pointer;
 }
 
 .dark .logo {
@@ -243,7 +244,7 @@
   width: 350px;
   max-height: 438px;
   padding: 10px;
-  border-left: 1px #292929 solid;
+  /*border-left: 1px #292929 solid;*/
   white-space: pre-line;
   text-align: center;
   justify-content: center;
@@ -255,7 +256,7 @@
   width: 350px;
   max-height: 438px;
   padding: 10px;
-  border-left: 1px #dcdcdc solid;
+  /*border-left: 1px #dcdcdc solid;*/
   white-space: pre-line;
   text-align: center;
   justify-content: center;
