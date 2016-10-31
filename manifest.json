@@ -9,5 +9,23 @@
    "default_popup": "main.html"
   },
 
-  "permissions": [ "storage", "activeTab", "tabs", "https://play.spotify.com/*" ]
+  "permissions": [ 
+  	"storage", 
+  	"activeTab", 
+  	"tabs", 
+  	"https://play.spotify.com/*",
+  	"contextMenus"
+  ],
+
+  "background": {
+  	"persistent":  false,
+    "scripts": [
+    	"js/background.js", 
+    	"js/main.js"
+    ]
+  },
+
+  "icons":{
+  	"16": "assets/icon.png"
+  }
 }

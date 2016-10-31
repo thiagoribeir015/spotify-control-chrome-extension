@@ -117,19 +117,17 @@ function fetchTrackArtist(tab, callback) {
 function fetchLyrics(){
   //get artist and trackname;
   var artist = document.getElementById("current-track-artist").innerHTML,
-    track = document.getElementById("current-track-name").innerHTML,
-    xhr = new XMLHttpRequest;
+      track = document.getElementById("current-track-name").innerHTML,
+      xhr = new XMLHttpRequest;
 
   xhr.onreadystatechange = function() {
       if (xhr.readyState == 4 && xhr.status == 200) {
 
           var response = JSON.parse(xhr.responseText);
-          //console.log(response);
-          //if(response.mus[0]){
-          //show container-lyrics and fill with response content;
+
           document.getElementById("container-lyrics").style.display = "flex";
           document.getElementById("container-lyrics").innerHTML = (response.mus && response.mus[0] ? response.mus[0].text : "Sorry, no lyric available for this song.");
-          //}
+          
       }
   }
   xhr.open('GET', 'https://api.vagalume.com.br/search.php?art='+artist+'&mus='+track+'&apikey='+VAGALUME_API);
