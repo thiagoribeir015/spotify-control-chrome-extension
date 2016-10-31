@@ -1,6 +1,6 @@
 # Spotify Web Player Control - Chrome Extension
 
-<a target="_blank" href="chrome.google.com/webstore/detail/spotify-web-player-contro/cgmcneemfjgkibalfalgjgmfnajkmopd/"><img alt="Try it now" src="https://github.com/thiagoribeir015/spotify-control-chrome-extension/blob/master/assets/app-store-img.png?raw=true" title="Click here to install this sample from the Chrome Web Store"></img></a>
+<a target="_blank" href="http://chrome.google.com/webstore/detail/spotify-web-player-contro/cgmcneemfjgkibalfalgjgmfnajkmopd/"><img alt="Try it now" src="https://github.com/thiagoribeir015/spotify-control-chrome-extension/blob/master/assets/app-store-img.png?raw=true" title="Click here to install this sample from the Chrome Web Store"></img></a>
 
 Control your current Spotify Web Player without looking for the right tab. Use the extension to Play/Pause/Previous/Next your current playlist.
 
