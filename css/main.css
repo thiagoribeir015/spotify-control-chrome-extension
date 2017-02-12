@@ -1,34 +1,187 @@
+.dark {
+  background: #1c1c1f;
+}
+
+.ligh {
+  background: #f1f1f1;
+}
+
 .flex {
   display: flex;
+}
+
+.flex-1{
+  flex: 1;
+}
+
+.flex-2{
+  flex: 2;
 }
 
 .main {
   flex-direction: column;
   align-items: center;
-  margin: 10px;
 }
 
 .logo {
-  height: 34px;
-}
-
-.logo > img {
-  height: 83%;
+  height: 40px;
+  cursor: pointer;
+  width: 134px;
+  background-size: cover !important;
+  margin: 10px 0;
   cursor: pointer;
 }
 
+.dark .logo {
+  background: url(../images/spotify-logo-write.png);
+}
+
+.light .logo {
+  background: url(../images/spotify-logo-black.png);
+}
+
+.player {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  overflow: hidden;
+}
+
+.effect {
+  width: 220px;
+  box-shadow: inset 0 0 70px #000000;
+  height: 220px;
+  display: block;
+  filter: blur(5px);
+  -webkit-filter: blur(5px);
+}
 .album {
-  width: 200px;
-  height: 200px;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 180px;
+  height: 180px;
   background-color: #F4F4F4;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
 }
 
 .track {
-  min-height: 50px;
+  font: 12px/1.42 'Lucida Grande', Tahoma, sans-serif;
   direction: ltr;
-  padding: 18px 0 15px 0;
   overflow: hidden;
   text-align: center;
+  margin: 10px 20px;
+}
+
+.dark .track {
+  color: #88898c;
+}
+
+.light .track {
+  color: #444;
+}
+
+.track-artist {
+    margin-top: 7px;
+}
+
+.dark .play {
+  cursor: pointer;
+  border-radius: 50%;
+  position: relative;
+  color: #dfe0e6;
+  background: rgba(0, 0, 0, 0.2);
+  border: 2px solid #88898c;
+  font-size: 24px;
+  font-weight: 600;
+  height: 50px;
+  max-height: 50px;
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.light .play {
+  cursor: pointer;
+  border-radius: 50%;
+  position: relative;
+  color: #444;
+  background: rgba(0, 0, 0, 0.1);
+  border: 2px solid #444;
+  font-size: 24px;
+  font-weight: 600;
+  height: 50px;
+  max-height: 50px;
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.play span {
+  width: 21px;
+  height: 25px;
+  margin-top: -2px;
+  margin-left: -1px;
+}
+
+.play:hover {
+  border-color: #84bd00;
+}
+
+.dark .show-lyrics-button {
+  background: transparent;
+  border: 2px solid #88898c;
+  border-radius: 0 4px 4px 0;
+  color: #dfe0e6;
+  padding: 5px 15px;
+  width: 100%;
+}
+
+.light .show-lyrics-button {
+  background: transparent;
+  border: 2px solid #444;
+  border-radius: 0 4px 4px 0;
+  color: #444;
+  padding: 5px 15px;
+  width: 100%;
+}
+
+.dark .btn-color-body {
+  background: transparent;
+  border: 2px solid #88898c;
+  border-right: 0;
+  border-radius: 4px 0 0 4px;
+  color: #dfe0e6;
+  padding: 5px 15px;
+  width: 100%;
+}
+
+.light .btn-color-body {
+  background: transparent;
+  border: 2px solid #444;
+  border-right: 0;
+  border-radius: 4px 0 0 4px;
+  color: #444;
+  padding: 5px 15px;
+  width: 100%;
+}
+
+.buttons {
+  display: flex;
+  padding: 10px;
+  width: 100%;
+}
+
+.dark .buttons button:hover {
+  color: #1c1c1f;
+  background: #88898c;
+}
+
+.light .buttons button:hover {
+  color: #f1f1f1;
+  background: #444;
 }
 
 .controller {
@@ -39,10 +192,26 @@
   padding: 0 20px 0 20px;
 }
 
-.controller__skip-back {
+.dark .controller__skip-back {
   font-size: 24px;
   display: flex;
   align-items: center;
+  color: #88898c;
+}
+
+.light .controller__skip-back {
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  color: #444;
+}
+
+.dark .controller__skip-back:hover {
+  color: #EEE;
+}
+
+.light .controller__skip-back:hover {
+  color: #666;
 }
 
 .controller__skip-back > .glyphicon {
@@ -69,6 +238,32 @@
 
 .green {
   color: #84BD00!important;
+}
+
+.dark #container-lyrics {
+  font: 12px/1.42 'Lucida Grande', Tahoma, sans-serif;
+  overflow-y: scroll;
+  width: 350px;
+  max-height: 438px;
+  padding: 10px;
+  /*border-left: 1px #292929 solid;*/
+  white-space: pre-line;
+  text-align: center;
+  justify-content: center;
+  color: #88898c;
+}
+
+.light #container-lyrics {
+  font: 12px/1.42 'Lucida Grande', Tahoma, sans-serif;
+  overflow-y: scroll;
+  width: 350px;
+  max-height: 438px;
+  padding: 10px;
+  /*border-left: 1px #dcdcdc solid;*/
+  white-space: pre-line;
+  text-align: center;
+  justify-content: center;
+  color: #585858;
 }
 
 button:focus {
