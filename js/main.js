@@ -1,265 +1,327 @@
-var MAIN_URL = 'https://play.spotify.com/*';
-var ALBUMS_URL = 'https://play.spotify.com/collection/albums';
-var APP_PLAYER = 'document.getElementById("app-player").contentDocument';
-var VAGALUME_API = '4b426abf3e83723a3f0ba2dedc63e6e2';
+/* globals XMLHttpRequest, chrome */
 
+var MAIN_URL = 'https://open.spotify.com/*'
+var ALBUMS_URL = 'https://open.spotify.com/collection/albums'
+var APP_PLAYER = 'document.getElementById("app-player").contentDocument'
+var VAGALUME_API = '4b426abf3e83723a3f0ba2dedc63e6e2'
 
-document.addEventListener('DOMContentLoaded', function() {
-  updateTrackInfo();
+// utils
+function findEl (path) {
+  return document.querySelector(path)
+}
 
-  // Add events to buttons;
-  document.getElementById('open').addEventListener('click', function() {
-    getSpotifyCurrentTab(function(tabs) {
-      if (!tabs.length) {
-        createSpotifyTab();
-      }
-      else {
-      	showSpotifyTab(tabs);
-      }
-    });
-  });
+function onClick (el, callback) {
+  return el.addEventListener('click', callback)
+}
 
-  chrome.storage.sync.get('color', function(item) {
-    if (!item.color) {
-      document.body.setAttribute("class", 'light');
-      document.getElementById('color-body').innerHTML = "Dark";
-    } else if (item.color == "light") {
-      document.body.setAttribute("class", item.color);
-      document.getElementById('color-body').innerHTML = "Dark";
-    } else {
-      document.body.setAttribute("class", item.color);
-      document.getElementById('color-body').innerHTML = "Light";
-    }
-  });
+var Chrome = {
+  executeScript: function (options, callback) {
+    var tab = options.tab
+    var code = options.code
 
-  document.getElementById('color-body').addEventListener('click', changeColor);
-  document.getElementById('play-pause').addEventListener('click', function() {
-    execute('play-pause');
-  });
-
-  document.getElementById('previous').addEventListener('click', function() {
-    execute('previous');
-  });
-
-  document.getElementById('next').addEventListener('click', function() {
-    execute('next');
-  });
-
-  document.getElementById("show-lyrics").addEventListener('click', function() {
-    fetchLyrics();
-  });
-});
-
-function changeColor() {
-  if (document.body.className == "light") {
-    document.body.setAttribute("class", "dark");
-    document.getElementById('color-body').innerHTML = "Light";
-    chrome.storage.sync.set({'color': 'dark'});
-  } else {
-    document.body.setAttribute("class", "light");
-    document.getElementById('color-body').innerHTML = "Dark";
-    chrome.storage.sync.set({'color': 'light'});
+    chrome.tabs.executeScript(tab.id, {
+      code: code
+    }, callback)
   }
 }
 
-function createSpotifyTab() {
-  chrome.tabs.create({url: ALBUMS_URL});
+var State = {
+  tabs: []
 }
 
-function showSpotifyTab(tabs) {
-  chrome.tabs.update(tabs[0].id, {highlighted: true});
-}
-
-function execute(elementId){
-  getSpotifyCurrentTab(function(tabs){
-    tabs.forEach(function (tab) {
-      dispatchClick(tab.id, elementId);
-    });
-
-    //Update current trackname;
-    setTimeout(updateTrackInfo, 2000);
-  });
-}
-
-function dispatchClick(tabId, elementId) {
-  chrome.tabs.executeScript(tabId, {
-    code: APP_PLAYER + ".getElementById('" + elementId + "').click()"
-  }, function () {
-    if (elementId === "play-pause") {
-      togglePlayPause();
-    }
-  });
-}
-
-function fetchAlbumArt(tab, callback) {
-  chrome.tabs.executeScript(tab, {
-    code: APP_PLAYER + '.getElementById("cover-art").querySelector(".sp-image-img").style.backgroundImage;'
+var Spotify = {
+  createTab: function () {
+    chrome.tabs.create({url: ALBUMS_URL})
   },
-  function(response) {
-    var albumArt = response[0].replace('url(','').replace(')','');
 
-    callback(albumArt);
-  });
-}
+  openTab: function () {
+    chrome.tabs.update(State.tabs[0].id, {highlighted: true})
+  },
 
-function fetchTrackName(tab, callback) {
-  chrome.tabs.executeScript(tab, {
-    code: APP_PLAYER + '.getElementById("track-name").getElementsByTagName("a")[0].innerHTML;'
-  }, callback);
-}
+  getCurrentTab: function (callback) {
+    chrome.tabs.query({url: MAIN_URL}, callback)
+  },
 
-function fetchTrackArtist(tab, callback) {
-  chrome.tabs.executeScript(tab, {
-    code: APP_PLAYER + '.getElementById("track-artist").getElementsByTagName("a")[0].innerHTML;'
-  }, callback);
-}
+  getAlbumArt: function (tab, callback) {
+    Chrome.executeScript({
+      tab: tab,
+      code: 'document.querySelector(".nowPlayingBar-container .cover-art-image").style.backgroundImage'
+    }, function (res) {
+      var albumArt = res[0].replace('url(', '').replace(')', '')
 
-function fetchLyrics(){
-  //get artist and trackname;
-  var artist = document.getElementById("current-track-artist").innerHTML,
-      track = document.getElementById("current-track-name").innerHTML,
-      xhr = new XMLHttpRequest;
+      callback(albumArt)
+    })
+  },
 
-  xhr.onreadystatechange = function() {
-      if (xhr.readyState == 4 && xhr.status == 200) {
+  getTrackName: function (tab, callback) {
+    Chrome.executeScript({
+      tab: tab,
+      code: 'document.querySelector(".nowPlayingBar-container ._2z_j1Of1fjzOcRFVsThOBz a").innerHTML'
+    }, callback)
+  },
 
-          var response = JSON.parse(xhr.responseText);
+  getArtistName: function (tab, callback) {
+    Chrome.executeScript({
+      tab: tab,
+      code: 'document.querySelector(".nowPlayingBar-container ._3tszSxBkp8jt11w-FI6OQF a").innerHTML'
+    }, callback)
+  },
 
-          document.getElementById("container-lyrics").style.display = "flex";
-          document.getElementById("container-lyrics").innerHTML = (response.mus && response.mus[0] ? response.mus[0].text : "Sorry, no lyric available for this song.");
-          
-      }
+  getPlayOrPauseStatus: function (tab, callback) {
+    Chrome.executeScript({
+      tab: tab,
+      code: 'document.querySelector(\'.nowPlayingBar-container .player-controls button[class^="control-button spoticon-pause"]\')'
+    }, function (res) {
+      var status = res[0] ? 'playing' : 'paused'
+
+      callback(status)
+    })
+  },
+
+  click: function (options, callback) {
+    var tab = options.tab
+    var query = options.query
+    var code = 'document.querySelector(\'' + query + '\').click()'
+
+    Chrome.executeScript({
+      tab: tab,
+      code: code
+    }, callback)
+  },
+
+  pause: function (tab, callback) {
+    Spotify.click({
+      tab: tab,
+      query: '.nowPlayingBar-container .player-controls button[class^="control-button spoticon-pause"]'
+    }, callback)
+  },
+
+  play: function (tab, callback) {
+    Spotify.click({
+      tab: tab,
+      query: '.nowPlayingBar-container .player-controls button[class^="control-button spoticon-play"]'
+    }, callback)
+  },
+
+  previous: function (tab, callback) {
+    Spotify.click({
+      tab: tab,
+      query: '.nowPlayingBar-container .player-controls button[class^="control-button spoticon-skip-back"]'
+    }, callback)
+  },
+
+  next: function (tab, callback) {
+    Spotify.click({
+      tab: tab,
+      query: '.nowPlayingBar-container .player-controls button[class^="control-button spoticon-skip-forward"]'
+    }, callback)
   }
-  xhr.open('GET', 'https://api.vagalume.com.br/search.php?art='+artist+'&mus='+track+'&apikey='+VAGALUME_API);
-  xhr.send();
+}
+
+var App = {
+  setTheme: function (theme) {
+    var bodyColor = theme === 'light'
+      ? 'Dark'
+      : 'Light'
+
+    document.body.setAttribute('class', theme)
+    findEl('#color-body').innerHTML = bodyColor
+  }
+}
+
+function changeColor () {
+  if (document.body.className === 'light') {
+    document.body.setAttribute('class', 'dark')
+    document.getElementById('color-body').innerHTML = 'Light'
+    chrome.storage.sync.set({'color': 'dark'})
+  } else {
+    document.body.setAttribute('class', 'light')
+    document.getElementById('color-body').innerHTML = 'Dark'
+    chrome.storage.sync.set({'color': 'light'})
+  }
+}
+
+function fetchLyrics () {
+  // get artist and trackname
+  var artist = findEl('#current-track-artist').innerHTML
+  var track = findEl('#current-track-name').innerHTML
+  var xhr = new XMLHttpRequest()
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      var response = JSON.parse(xhr.responseText)
+
+      findEl('#container-lyrics').style.display = 'flex'
+      findEl('#container-lyrics').innerHTML = (response.mus && response.mus[0] ? response.mus[0].text : 'Sorry, no lyric available for this song.')
+    }
+  }
+  xhr.open('GET', 'https://api.vagalume.com.br/search.php?art=' + artist + '&mus=' + track + '&apikey=' + VAGALUME_API)
+  xhr.send()
 }
 
 /**
- * Fetch spotify element class (from id);
- * return: object with classnames as attributes and value=true;
+ * Fetch spotify element class (from id)
+ * return: object with classnames as attributes and value=true
  */
-function fetchClassNamesById(tab, id, callback) {
+function fetchClassNamesById (tab, id, callback) {
   chrome.tabs.executeScript(tab, {
-    code: APP_PLAYER + '.getElementById("' + id + '").className;'
+    code: APP_PLAYER + '.getElementById("' + id + '").className'
   }, function (response) {
-    var classNamesList = String(response).split(" ");
-    var classNamesObject = {}; //object with className:true
+    var classNamesList = String(response).split(' ')
+    var classNamesObject = {} // object with className:true
 
     classNamesList.forEach(function (className) {
-      classNamesObject[className] = true;
-    });
+      classNamesObject[className] = true
+    })
 
-    callback(classNamesObject);
-  });
+    callback(classNamesObject)
+  })
 }
 
-function fetchControlState(tab, control, callback) {
+function fetchControlState (tab, control, callback) {
   fetchClassNamesById(tab, control, function (response) {
-    var state = "active";
+    var state = 'active'
 
     if (response.disabled) {
-      state = "disabled";
+      state = 'disabled'
     }
 
-    callback(control, state);
-  });
+    callback(control, state)
+  })
 }
 
-function fetchPlayPauseState(tab, callback) {
-  fetchClassNamesById(tab, "play-pause", function (classNames) {
-    var state = "paused";
+function togglePlayPause () {
+  for (var tab of State.tabs) {
+    Spotify.getPlayOrPauseStatus(tab, function (status) {
+      var toggle = {
+        paused: 'playing',
+        playing: 'paused',
+        disabled: 'disabled'
+      }
 
-    if (classNames.playing) {
-      state = "playing";
-    } else if (classNames.disabled) {
-      state = "disabled"
-    }
-
-    callback(state);
-  });
+      renderPlayPauseState(toggle[status])
+    })
+  }
 }
 
-function togglePlayPause() {
-  getSpotifyCurrentTab(function(tabs) {
-    for (var tab of tabs) {
-      fetchPlayPauseState(tab.id, function (state) {
-
-        var toggle = {
-          paused: "playing",
-          playing: "paused",
-          disabled: "disabled"
-        };
-
-        renderPlayPauseState(toggle[state]);
-      });
-    }
-  });
+function renderAlbumArt (albumArtURL) {
+  findEl('#background-album').style.background = 'url(' + albumArtURL + ')'
+  findEl('#album-art').innerHTML = '<img src=' + albumArtURL + ' style="width:180px; height:180px">'
 }
 
-function renderAlbumArt(albumArtURL) {
-  document.querySelector('#background-album').style.background = 'url('+ albumArtURL +')';
-  document.querySelector('#album-art').innerHTML = '<img src=' + albumArtURL + ' style="width:180px; height:180px;">';
+function renderTrackName (name) {
+  findEl('#current-track-name').innerHTML = name
 }
 
-function renderTrackName(name) {
-  document.querySelector('#current-track-name').innerHTML = name;
+function renderTrackArtist (artist) {
+  findEl('#current-track-artist').innerHTML = artist
 }
 
-function renderTrackArtist(artist) {
-  document.querySelector('#current-track-artist').innerHTML = artist;
-}
+function renderControlState (control, state) {
+  var controlClassName = 'controller__skip-back'
 
-function renderControlState(control, state) {
-  var controlClassName = "controller__skip-back";
-
-  if (state === "disabled") {
-    controlClassName += " disabled";
+  if (state === 'disabled') {
+    controlClassName += ' disabled'
   }
 
-  document.getElementById(control).className  = controlClassName;
+  document.getElementById(control).className = controlClassName
 }
 
-function renderPlayPauseState(state) {
-  var playPauseDOM = document.getElementById("play-pause");
-  var playPauseClassName = 'glyphicon glyphicon-play';
+function renderPlayPauseState (state) {
+  var playPauseDOM = findEl('#play-pause')
+  var playPauseClassName = 'glyphicon glyphicon-play'
 
   switch (state) {
-    case "playing":
-      playPauseClassName = 'glyphicon glyphicon-pause';
-      playPauseDOM.removeAttribute("disabled", true );
-      break;
-    case "paused":
-      playPauseDOM.removeAttribute("disabled", true );
-      break;
-    case "disabled":
-      playPauseDOM.setAttribute("disabled", true );
+    case 'playing':
+      playPauseClassName = 'glyphicon glyphicon-pause'
+      playPauseDOM.removeAttribute('disabled', true)
+      break
+    case 'paused':
+      playPauseDOM.removeAttribute('disabled', true)
+      break
+    case 'disabled':
+      playPauseDOM.setAttribute('disabled', true)
   }
 
-  playPauseDOM.getElementsByTagName("span")[0].className = playPauseClassName;
+  playPauseDOM.getElementsByTagName('span')[0].className = playPauseClassName
+}
+
+function execute (action) {
+  State.tabs.forEach(function (tab) {
+    Spotify[action](tab)
+  })
+
+  // Update current trackname
+  setTimeout(updateTrackInfo, 2000)
 }
 
 /**
- * Show current trackname if there's one;
+ * Show current trackname if there's one
  */
-function updateTrackInfo() {
-  getSpotifyCurrentTab(function(tabs) {
-    for (var tab of tabs) {
-      fetchAlbumArt(tab.id, renderAlbumArt);
+function updateTrackInfo () {
+  for (var tab of State.tabs) {
+    Spotify.getAlbumArt(tab, renderAlbumArt)
+    Spotify.getTrackName(tab, renderTrackName)
+    Spotify.getArtistName(tab.id, renderTrackArtist)
 
-      fetchTrackName(tab.id, renderTrackName);
-      fetchTrackArtist(tab.id, renderTrackArtist);
+    fetchControlState(tab.id, 'previous', renderControlState)
+    fetchControlState(tab.id, 'next', renderControlState)
 
-      fetchControlState(tab.id, "previous", renderControlState);
-      fetchControlState(tab.id, "next", renderControlState);
-
-      fetchPlayPauseState(tab.id, renderPlayPauseState);
-    }
-  });
+    Spotify.getPlayOrPauseStatus(tab, renderPlayPauseState)
+  }
 }
 
-/**
- * Look for tabs with url like MAIN_URL;
- */
-function getSpotifyCurrentTab(successFunction) {
-  chrome.tabs.query({url: MAIN_URL}, successFunction);
+function fetchTheme (callback) {
+  chrome.storage.sync.get('color', function (item) {
+    callback(item.color || 'light')
+  })
 }
+
+function setInitialTheme () {
+  fetchTheme(App.setTheme)
+}
+
+function handlePayOrPauseClick () {
+  State.tabs.forEach(function (tab) {
+    Spotify.getPlayOrPauseStatus(tab, function (status) {
+      return status === 'playing'
+        ? execute('pause')
+        : execute('play')
+    })
+    togglePlayPause()
+  })
+}
+
+function handleLogoClick () {
+  return State.tabs.length
+    ? Spotify.openTab(State.tabs)
+    : Spotify.createTab()
+}
+
+function setInitialState (callback) {
+  Spotify.getCurrentTab(function (tabs) {
+    State.tabs = tabs
+
+    callback()
+  })
+};
+
+// init
+document.addEventListener('DOMContentLoaded', function () {
+  setInitialState(function () {
+    updateTrackInfo()
+    setInitialTheme()
+
+    // events
+    onClick(findEl('#open'), handleLogoClick)
+    onClick(findEl('#color-body'), changeColor)
+    onClick(findEl('#play-pause'), handlePayOrPauseClick)
+    onClick(findEl('#previous'), function () {
+      execute('previous')
+    })
+    onClick(findEl('#next'), function () {
+      execute('next')
+    })
+    onClick(findEl('#show-lyrics'), fetchLyrics)
+  })
+})
