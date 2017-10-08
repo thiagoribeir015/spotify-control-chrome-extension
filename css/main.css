@@ -245,8 +245,7 @@
   overflow-y: scroll;
   width: 350px;
   max-height: 438px;
-  padding: 10px;
-  /*border-left: 1px #292929 solid;*/
+  margin: 15px 10px;
   white-space: pre-line;
   text-align: center;
   justify-content: center;
@@ -258,8 +257,7 @@
   overflow-y: scroll;
   width: 350px;
   max-height: 438px;
-  padding: 10px;
-  /*border-left: 1px #dcdcdc solid;*/
+  margin: 15px 10px;
   white-space: pre-line;
   text-align: center;
   justify-content: center;

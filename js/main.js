@@ -56,14 +56,14 @@ var Spotify = {
   getTrackName: function (tab, callback) {
     Chrome.executeScript({
       tab: tab,
-      code: 'document.querySelector(".nowPlayingBar-container ._2z_j1Of1fjzOcRFVsThOBz a").innerHTML'
+      code: 'document.querySelector(".track-info__name a").innerHTML'
     }, callback)
   },
 
   getArtistName: function (tab, callback) {
     Chrome.executeScript({
       tab: tab,
-      code: 'document.querySelector(".nowPlayingBar-container ._3tszSxBkp8jt11w-FI6OQF a").innerHTML'
+      code: 'document.querySelector(".track-info__artists a").innerText'
     }, callback)
   },
 
@@ -210,11 +210,13 @@ function renderAlbumArt (albumArtURL) {
 }
 
 function renderTrackName (name) {
-  findEl('#current-track-name').innerHTML = name
+  console.log('renderTrackName', name);
+  findEl('#current-track-name').innerHTML = name || '-'
 }
 
 function renderTrackArtist (artist) {
-  findEl('#current-track-artist').innerHTML = artist
+  console.log('renderTrackArtist', artist);
+  findEl('#current-track-artist').innerHTML = artist || '-';
 }
 
 function renderControlState (control, state) {
@@ -262,7 +264,7 @@ function updateTrackInfo () {
   for (var tab of State.tabs) {
     Spotify.getAlbumArt(tab, renderAlbumArt)
     Spotify.getTrackName(tab, renderTrackName)
-    Spotify.getArtistName(tab.id, renderTrackArtist)
+    Spotify.getArtistName(tab, renderTrackArtist)
 
     fetchControlState(tab.id, 'previous', renderControlState)
     fetchControlState(tab.id, 'next', renderControlState)
