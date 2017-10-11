@@ -275,7 +275,7 @@ function updateTrackInfo () {
 
 function fetchTheme (callback) {
   chrome.storage.sync.get('color', function (item) {
-    callback(item.color || 'light')
+    callback(item.color || 'dark')
   })
 }
 
