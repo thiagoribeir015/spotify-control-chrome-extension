@@ -283,7 +283,8 @@ function setInitialTheme () {
   fetchTheme(App.setTheme)
 }
 
-function handlePayOrPauseClick () {
+// this method is called on background.js to toggle between play/pause;
+function handlePlayOrPauseClick () {
   State.tabs.forEach(function (tab) {
     Spotify.getPlayOrPauseStatus(tab, function (status) {
       return status === 'playing'
@@ -317,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // events
     onClick(findEl('#open'), handleLogoClick)
     onClick(findEl('#color-body'), changeColor)
-    onClick(findEl('#play-pause'), handlePayOrPauseClick)
+    onClick(findEl('#play-pause'), handlePlayOrPauseClick)
     onClick(findEl('#previous'), function () {
       execute('previous')
     })
