@@ -1,43 +1,43 @@
 <!doctype html>
 <html>
-  <head>
+<head>
     <title>Spotify Web Player Control</title>
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="css/main.css" rel="stylesheet" type="text/css">
     <script src="js/main.js"></script>
-  </head>
+</head>
 
-  <body class="light" style="display:flex">
-  	<div class="main flex">
-      <div id="open" class="logo"></div>
-      <div class="player">
+<body class="light" style="display:flex">
+<div class="main flex">
+    <div class="logo" id="open"></div>
+    <div class="player">
         <div class="effect" id="background-album"></div>
         <div class="album" id="album-art"></div>
-      </div>
-      <div class="track flex flex-1" id="current-track">
+    </div>
+    <div class="track flex flex-1" id="current-track">
         <div class="track-name">
-          <strong id="current-track-name"></strong>
+            <strong id="current-track-name"></strong>
         </div>
         <div class="track-artist">
-          <span id="current-track-artist"></span>
+            <span id="current-track-artist"></span>
         </div>
-      </div>
-      <div class="controller flex flex-1">
-        <div id="previous" class="controller__skip-back disabled">
-          <span  class="glyphicon glyphicon-step-backward" aria-hidden="true"></span>
-        </div>
-        <button id="play-pause" disabled="true" type="button" class="play">
-          <span class="glyphicon glyphicon-play"></span>
-        </button>
-        <div id="next" class="controller__skip-back disabled">
-          <span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>
-        </div>
-      </div>
-      <div class="buttons">
-        <button id="color-body" class="btn-color-body" type="button"></button>
-        <button id="show-lyrics" type="button" class="show-lyrics-button">Lyrics</button>
-      </div>
     </div>
-    <div id="container-lyrics" style="display:none"></div>
-  </body>
+    <div class="controller flex flex-1">
+        <div class="controller__skip-back disabled" id="previous">
+            <span aria-hidden="true" class="glyphicon glyphicon-step-backward"></span>
+        </div>
+        <button class="play" disabled="true" id="play-pause" type="button">
+            <span class="glyphicon glyphicon-play"></span>
+        </button>
+        <div class="controller__skip-back disabled" id="next">
+            <span aria-hidden="true" class="glyphicon glyphicon-step-forward"></span>
+        </div>
+    </div>
+    <div class="buttons">
+        <button class="btn-color-body" id="color-body" type="button"></button>
+        <button class="show-lyrics-button" id="show-lyrics" type="button">Lyrics</button>
+    </div>
+</div>
+<div id="container-lyrics" style="display:none"></div>
+</body>
 </html>
