@@ -2,10 +2,15 @@
   "manifest_version": 2,
   "name": "Spotify Web Player Control with Lyrics",
   "description": "This extension will allow you to control your current Spotify Web Player and show current playing song lyirics.",
-  "version": "1.5",
+  "version": "1.6",
 
   "browser_action": {
-    "default_icon": "assets/icon.png",
+    "default_icon": {
+      "19": "assets/icon.png",
+      "38": "assets/icon.png",
+      "48": "assets/icon.png",
+      "128": "assets/icon.png"
+    },
     "default_popup": "main.html"
   },
 
@@ -23,6 +28,9 @@
   },
 
   "icons": {
-    "16": "assets/icon.png"
+    "19": "assets/icon.png",
+    "38": "assets/icon.png",
+    "48": "assets/icon.png",
+    "128": "assets/icon.png"
   }
 }
