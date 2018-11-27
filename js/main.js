@@ -209,7 +209,7 @@ async function fetchLyrics() {
     updateLyricsText('Song not found on genius.com');
   } else if (!res.ok) {
     updateLyricsText(
-      'Unknown error, feel free to open an issue on GitHub: https://github.com/lodi-g/spotify-control-chrome-extension',
+      'Unknown error, feel free to open an issue on GitHub: https://github.com/thiagoribeir015/spotify-control-chrome-extension/',
     );
   } else {
     const lyrics = await res.text();

@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lodi-g/spotify-control-chrome-extension.git"
+    "url": "git+https://github.com/thiagoribeir015/spotify-control-chrome-extension.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/lodi-g/spotify-control-chrome-extension/issues"
+    "url": "https://github.com/thiagoribeir015/spotify-control-chrome-extension/issues"
   },
-  "homepage": "https://github.com/lodi-g/spotify-control-chrome-extension#readme",
+  "homepage": "https://github.com/thiagoribeir015/spotify-control-chrome-extension#readme",
   "devDependencies": {
     "eslint": "^5.9.0",
     "eslint-config-airbnb-base": "^13.1.0",
