@@ -8,7 +8,7 @@ Control your current Spotify Web Player without looking for the right tab. Use t
 
 ## Installation
 
-Clone the project and just load the project folder into the chrome extensions tab. 
+Clone the project and just load the project folder into the chrome extensions tab.
 
 ## Small Print
 
@@ -25,7 +25,8 @@ Clone the project and just load the project folder into the chrome extensions ta
 * Thiago Ribeiro ([@thiagoribeir015](http://twitter.com/thiagoribeir015))
 
 ### Contributors
- 
+
+* Grégoire Lodi (https://github.com/lodi-g)
 * Leonardo Luiz (https://github.com/leonardokl)
 * Emerson Laurentino (https://github.com/emersonlaurentino)
 * Special thanks to Francois Beaufort (https://github.com/beaufortfrancois) for project inspiration.
