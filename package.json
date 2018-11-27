@@ -1,0 +1,25 @@
+{
+  "name": "spotify-control-chrome-extension",
+  "version": "1.0.0",
+  "description": "<a target=\"_blank\" href=\"http://chrome.google.com/webstore/detail/spotify-web-player-contro/cgmcneemfjgkibalfalgjgmfnajkmopd/\"><img alt=\"Try it now\" src=\"https://github.com/thiagoribeir015/spotify-control-chrome-extension/blob/master/assets/app-store-img.png?raw=true\" title=\"Click here to install this sample from the Chrome Web Store\"></img></a>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lodi-g/spotify-control-chrome-extension.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lodi-g/spotify-control-chrome-extension/issues"
+  },
+  "homepage": "https://github.com/lodi-g/spotify-control-chrome-extension#readme",
+  "devDependencies": {
+    "eslint": "^5.9.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0"
+  }
+}

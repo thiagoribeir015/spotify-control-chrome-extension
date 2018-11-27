@@ -1,330 +1,388 @@
-/* globals XMLHttpRequest, chrome */
+const MAIN_URL = 'https://open.spotify.com/*';
+const ALBUMS_URL = 'https://open.spotify.com/collection/albums';
+const APP_PLAYER = 'document.getElementById("app-player").contentDocument';
 
-var MAIN_URL = 'https://open.spotify.com/*'
-var ALBUMS_URL = 'https://open.spotify.com/collection/albums'
-var APP_PLAYER = 'document.getElementById("app-player").contentDocument'
-var VAGALUME_API = '4b426abf3e83723a3f0ba2dedc63e6e2'
+const BACKEND_URL = 'https://spotify-lyrics.vaslyn.epi.codes';
+
+const selectors = {
+  albumArt:
+    '#main .Root__now-playing-bar .now-playing-bar__left .cover-art-image.cover-art-image-loaded',
+  trackName: '.track-info__name a',
+  artistName: '.track-info__artists a',
+  playPauseBtn:
+    '#main .Root__now-playing-bar .now-playing-bar__center .player-controls__buttons button:nth-child(3)',
+  prevBtn:
+    '#main .Root__now-playing-bar .now-playing-bar__center .player-controls__buttons button:nth-child(2)',
+  nextBtn:
+    '#main .Root__now-playing-bar .now-playing-bar__center .player-controls__buttons button:nth-child(4)',
+};
 
 // utils
-function findEl (path) {
-  return document.querySelector(path)
+function findEl(path) {
+  return document.querySelector(path);
 }
 
-function onClick (el, callback) {
-  return el.addEventListener('click', callback)
+function onClick(el, callback) {
+  return el.addEventListener('click', callback);
 }
 
-var Chrome = {
-  executeScript: function (options, callback) {
-    var tab = options.tab
-    var code = options.code
+const Chrome = {
+  executeScript(options, callback) {
+    const { tab, code } = options;
 
-    chrome.tabs.executeScript(tab.id, {
-      code: code
-    }, callback)
-  }
-}
+    chrome.tabs.executeScript(
+      tab.id,
+      {
+        code,
+      },
+      callback,
+    );
+  },
+};
 
-var State = {
-  tabs: []
-}
+const State = {
+  tabs: [],
+};
 
-var Spotify = {
-  createTab: function () {
-    chrome.tabs.create({url: ALBUMS_URL})
+const Spotify = {
+  createTab() {
+    chrome.tabs.create({ url: ALBUMS_URL });
   },
 
-  openTab: function () {
-    chrome.tabs.update(State.tabs[0].id, {highlighted: true})
+  openTab() {
+    chrome.tabs.update(State.tabs[0].id, { highlighted: true });
   },
 
-  getCurrentTab: function (callback) {
-    chrome.tabs.query({url: MAIN_URL}, callback)
+  getCurrentTab(callback) {
+    chrome.tabs.query({ url: MAIN_URL }, callback);
   },
 
-  getAlbumArt: function (tab, callback) {
-    Chrome.executeScript({
-      tab: tab,
-      code: 'document.querySelector(".nowPlayingBar-container .cover-art-image").style.backgroundImage'
-    }, function (res) {
-      var albumArt = res[0].replace('url(', '').replace(')', '')
-
-      callback(albumArt)
-    })
+  getAlbumArt(tab, callback) {
+    Chrome.executeScript(
+      {
+        tab,
+        code: `document.querySelector('${selectors.albumArt}').style.backgroundImage`,
+      },
+      (res) => {
+        const albumArt = res[0].replace('url(', '').replace(')', '');
+        callback(albumArt);
+      },
+    );
   },
 
-  getTrackName: function (tab, callback) {
-    Chrome.executeScript({
-      tab: tab,
-      code: 'document.querySelector(".track-info__name a").innerHTML'
-    }, callback)
+  getTrackName(tab, callback) {
+    Chrome.executeScript(
+      {
+        tab,
+        code: `document.querySelector('${selectors.trackName}').innerHTML`,
+      },
+      callback,
+    );
   },
 
-  getArtistName: function (tab, callback) {
-    Chrome.executeScript({
-      tab: tab,
-      code: 'document.querySelector(".track-info__artists a").innerText'
-    }, callback)
+  getArtistName(tab, callback) {
+    Chrome.executeScript(
+      {
+        tab,
+        code: `document.querySelector('${selectors.artistName}').innerText`,
+      },
+      callback,
+    );
   },
 
-  getPlayOrPauseStatus: function (tab, callback) {
-    Chrome.executeScript({
-      tab: tab,
-      code: 'document.querySelector(\'.nowPlayingBar-container .player-controls button[class^="control-button spoticon-pause"]\')'
-    }, function (res) {
-      var status = res[0] ? 'playing' : 'paused'
-
-      callback(status)
-    })
+  getPlayOrPauseStatus(tab, callback) {
+    Chrome.executeScript(
+      {
+        tab,
+        code: `document.querySelector('${selectors.playPauseBtn}').className`,
+      },
+      (res) => {
+        if (res[0].indexOf('pause') === -1) {
+          callback('paused');
+        } else {
+          callback('playing');
+        }
+      },
+    );
   },
 
-  click: function (options, callback) {
-    var tab = options.tab
-    var query = options.query
-    var code = 'document.querySelector(\'' + query + '\').click()'
+  click(options, callback) {
+    const { tab, query } = options;
+    const code = `document.querySelector('${query}').click()`;
 
-    Chrome.executeScript({
-      tab: tab,
-      code: code
-    }, callback)
+    Chrome.executeScript(
+      {
+        tab,
+        code,
+      },
+      callback,
+    );
   },
 
-  pause: function (tab, callback) {
-    Spotify.click({
-      tab: tab,
-      query: '.nowPlayingBar-container .player-controls button[class^="control-button spoticon-pause"]'
-    }, callback)
+  pause(tab, callback) {
+    Spotify.click(
+      {
+        tab,
+        query: selectors.playPauseBtn,
+      },
+      callback,
+    );
   },
 
-  play: function (tab, callback) {
-    Spotify.click({
-      tab: tab,
-      query: '.nowPlayingBar-container .player-controls button[class^="control-button spoticon-play"]'
-    }, callback)
+  play(tab, callback) {
+    Spotify.click(
+      {
+        tab,
+        query: selectors.playPauseBtn,
+      },
+      callback,
+    );
   },
 
-  previous: function (tab, callback) {
-    Spotify.click({
-      tab: tab,
-      query: '.nowPlayingBar-container .player-controls button[class^="control-button spoticon-skip-back"]'
-    }, callback)
+  previous(tab, callback) {
+    Spotify.click(
+      {
+        tab,
+        query: selectors.prevBtn,
+      },
+      callback,
+    );
   },
 
-  next: function (tab, callback) {
-    Spotify.click({
-      tab: tab,
-      query: '.nowPlayingBar-container .player-controls button[class^="control-button spoticon-skip-forward"]'
-    }, callback)
-  }
-}
+  next(tab, callback) {
+    Spotify.click(
+      {
+        tab,
+        query: selectors.nextBtn,
+      },
+      callback,
+    );
+  },
+};
 
-var App = {
-  setTheme: function (theme) {
-    var bodyColor = theme === 'light'
-      ? 'Dark'
-      : 'Light'
+const App = {
+  setTheme(theme) {
+    const bodyColor = theme === 'light' ? 'Dark' : 'Light';
 
-    document.body.setAttribute('class', theme)
-    findEl('#color-body').innerHTML = bodyColor
-  }
-}
+    document.body.setAttribute('class', theme);
+    findEl('#color-body').innerHTML = bodyColor;
+  },
+};
 
-function changeColor () {
+function changeColor() {
   if (document.body.className === 'light') {
-    document.body.setAttribute('class', 'dark')
-    document.getElementById('color-body').innerHTML = 'Light'
-    chrome.storage.sync.set({'color': 'dark'})
+    document.body.setAttribute('class', 'dark');
+    document.getElementById('color-body').innerHTML = 'Light';
+    chrome.storage.sync.set({ color: 'dark' });
   } else {
-    document.body.setAttribute('class', 'light')
-    document.getElementById('color-body').innerHTML = 'Dark'
-    chrome.storage.sync.set({'color': 'light'})
+    document.body.setAttribute('class', 'light');
+    document.getElementById('color-body').innerHTML = 'Dark';
+    chrome.storage.sync.set({ color: 'light' });
   }
 }
 
-function fetchLyrics () {
+function updateLyricsText(text) {
+  const container = findEl('#container-lyrics');
+  container.style.display = 'flex';
+  container.style.textAlign = 'justify';
+  container.innerText = text;
+}
+
+async function fetchLyrics() {
   // get artist and trackname
-  var artist = findEl('#current-track-artist').innerHTML
-  var track = findEl('#current-track-name').innerHTML
-  var xhr = new XMLHttpRequest()
+  const artist = findEl('#current-track-artist').innerHTML;
+  const track = findEl('#current-track-name').innerHTML;
 
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4 && xhr.status === 200) {
-      var response = JSON.parse(xhr.responseText)
+  updateLyricsText('Loading...');
 
-      findEl('#container-lyrics').style.display = 'flex'
-      findEl('#container-lyrics').innerHTML = (response.mus && response.mus[0] ? response.mus[0].text : 'Sorry, no lyric available for this song.')
-    }
+  // to protect accesstoken there is a custom backend
+  // see https://gitlab.com/lodi-g/spotify-control-chrome-extension-backend
+  const res = await fetch(BACKEND_URL, {
+    method: 'POST',
+    body: JSON.stringify({ artist, track }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (res.status === 404) {
+    updateLyricsText('Song not found on genius.com');
+  } else if (!res.ok) {
+    updateLyricsText(
+      'Unknown error, feel free to open an issue on GitHub: https://github.com/lodi-g/spotify-control-chrome-extension',
+    );
+  } else {
+    const lyrics = await res.text();
+
+    updateLyricsText(lyrics.trim());
   }
-  xhr.open('GET', 'https://api.vagalume.com.br/search.php?art=' + artist + '&mus=' + track + '&apikey=' + VAGALUME_API)
-  xhr.send()
 }
 
 /**
  * Fetch spotify element class (from id)
  * return: object with classnames as attributes and value=true
  */
-function fetchClassNamesById (tab, id, callback) {
-  chrome.tabs.executeScript(tab, {
-    code: APP_PLAYER + '.getElementById("' + id + '").className'
-  }, function (response) {
-    var classNamesList = String(response).split(' ')
-    var classNamesObject = {} // object with className:true
+function fetchClassNamesById(tab, id, callback) {
+  chrome.tabs.executeScript(
+    tab,
+    {
+      code: `${APP_PLAYER}.getElementById("${id}").className`,
+    },
+    (response) => {
+      const classNamesList = String(response).split(' ');
+      const classNamesObject = {}; // object with className:true
 
-    classNamesList.forEach(function (className) {
-      classNamesObject[className] = true
-    })
+      classNamesList.forEach((className) => {
+        classNamesObject[className] = true;
+      });
 
-    callback(classNamesObject)
-  })
+      callback(classNamesObject);
+    },
+  );
 }
 
-function fetchControlState (tab, control, callback) {
-  fetchClassNamesById(tab, control, function (response) {
-    var state = 'active'
+function fetchControlState(tab, control, callback) {
+  fetchClassNamesById(tab, control, (response) => {
+    let state = 'active';
 
     if (response.disabled) {
-      state = 'disabled'
+      state = 'disabled';
     }
 
-    callback(control, state)
-  })
+    callback(control, state);
+  });
 }
 
-function togglePlayPause () {
-  for (var tab of State.tabs) {
-    Spotify.getPlayOrPauseStatus(tab, function (status) {
-      var toggle = {
+function togglePlayPause() {
+  for (const tab of State.tabs) {
+    Spotify.getPlayOrPauseStatus(tab, (status) => {
+      const toggle = {
         paused: 'playing',
         playing: 'paused',
-        disabled: 'disabled'
-      }
+        disabled: 'disabled',
+      };
 
-      renderPlayPauseState(toggle[status])
-    })
+      renderPlayPauseState(toggle[status]);
+    });
   }
 }
 
-function renderAlbumArt (albumArtURL) {
-  findEl('#background-album').style.background = 'url(' + albumArtURL + ')'
-  findEl('#album-art').innerHTML = '<img src=' + albumArtURL + ' style="width:180px; height:180px">'
+function renderAlbumArt(albumArtURL) {
+  findEl('#background-album').style.background = `url(${albumArtURL})`;
+  findEl('#album-art').innerHTML = `<img src=${albumArtURL} style="width:180px; height:180px">`;
 }
 
-function renderTrackName (name) {
-  console.log('renderTrackName', name);
-  findEl('#current-track-name').innerHTML = name || '-'
+function renderTrackName(name) {
+  findEl('#current-track-name').innerHTML = name || '-';
 }
 
-function renderTrackArtist (artist) {
-  console.log('renderTrackArtist', artist);
+function renderTrackArtist(artist) {
   findEl('#current-track-artist').innerHTML = artist || '-';
 }
 
-function renderControlState (control, state) {
-  var controlClassName = 'controller__skip-back'
+function renderControlState(control, state) {
+  let controlClassName = 'controller__skip-back';
 
   if (state === 'disabled') {
-    controlClassName += ' disabled'
+    controlClassName += ' disabled';
   }
 
-  document.getElementById(control).className = controlClassName
+  document.getElementById(control).className = controlClassName;
 }
 
-function renderPlayPauseState (state) {
-  var playPauseDOM = findEl('#play-pause')
-  var playPauseClassName = 'glyphicon glyphicon-play'
+function renderPlayPauseState(state) {
+  const playPauseDOM = findEl('#play-pause');
+  let playPauseClassName = 'glyphicon glyphicon-play';
 
   switch (state) {
     case 'playing':
-      playPauseClassName = 'glyphicon glyphicon-pause'
-      playPauseDOM.removeAttribute('disabled', true)
-      break
+      playPauseClassName = 'glyphicon glyphicon-pause';
+      playPauseDOM.removeAttribute('disabled', true);
+      break;
     case 'paused':
-      playPauseDOM.removeAttribute('disabled', true)
-      break
+      playPauseDOM.removeAttribute('disabled', true);
+      break;
     case 'disabled':
-      playPauseDOM.setAttribute('disabled', true)
+      playPauseDOM.setAttribute('disabled', true);
+      break;
+    default:
+      break;
   }
 
-  playPauseDOM.getElementsByTagName('span')[0].className = playPauseClassName
-}
-
-function execute (action) {
-  State.tabs.forEach(function (tab) {
-    Spotify[action](tab)
-  })
-
-  // Update current trackname
-  setTimeout(updateTrackInfo, 2000)
+  playPauseDOM.getElementsByTagName('span')[0].className = playPauseClassName;
 }
 
 /**
  * Show current trackname if there's one
  */
-function updateTrackInfo () {
-  for (var tab of State.tabs) {
-    Spotify.getAlbumArt(tab, renderAlbumArt)
-    Spotify.getTrackName(tab, renderTrackName)
-    Spotify.getArtistName(tab, renderTrackArtist)
+function updateTrackInfo() {
+  for (const tab of State.tabs) {
+    Spotify.getAlbumArt(tab, renderAlbumArt);
+    Spotify.getTrackName(tab, renderTrackName);
+    Spotify.getArtistName(tab, renderTrackArtist);
 
-    fetchControlState(tab.id, 'previous', renderControlState)
-    fetchControlState(tab.id, 'next', renderControlState)
+    fetchControlState(tab.id, 'previous', renderControlState);
+    fetchControlState(tab.id, 'next', renderControlState);
 
-    Spotify.getPlayOrPauseStatus(tab, renderPlayPauseState)
+    Spotify.getPlayOrPauseStatus(tab, renderPlayPauseState);
   }
 }
 
-function fetchTheme (callback) {
-  chrome.storage.sync.get('color', function (item) {
-    callback(item.color || 'dark')
-  })
+function execute(action) {
+  State.tabs.forEach((tab) => {
+    Spotify[action](tab);
+  });
+
+  // Update current trackname
+  setTimeout(updateTrackInfo, 1000);
 }
 
-function setInitialTheme () {
-  fetchTheme(App.setTheme)
+function fetchTheme(callback) {
+  chrome.storage.sync.get('color', (item) => {
+    callback(item.color || 'dark');
+  });
+}
+
+function setInitialTheme() {
+  fetchTheme(App.setTheme);
 }
 
 // this method is called on background.js to toggle between play/pause;
-function handlePlayOrPauseClick () {
-  State.tabs.forEach(function (tab) {
-    Spotify.getPlayOrPauseStatus(tab, function (status) {
-      return status === 'playing'
-        ? execute('pause')
-        : execute('play')
-    })
-    togglePlayPause()
-  })
+function handlePlayOrPauseClick() {
+  State.tabs.forEach((tab) => {
+    Spotify.getPlayOrPauseStatus(tab, status => (status === 'playing' ? execute('pause') : execute('play')));
+    togglePlayPause();
+  });
 }
 
-function handleLogoClick () {
-  return State.tabs.length
-    ? Spotify.openTab(State.tabs)
-    : Spotify.createTab()
+function handleLogoClick() {
+  return State.tabs.length ? Spotify.openTab(State.tabs) : Spotify.createTab();
 }
 
-function setInitialState (callback) {
-  Spotify.getCurrentTab(function (tabs) {
-    State.tabs = tabs
+function setInitialState(callback) {
+  Spotify.getCurrentTab((tabs) => {
+    State.tabs = tabs;
 
-    callback()
-  })
-};
+    callback();
+  });
+}
 
 // init
-document.addEventListener('DOMContentLoaded', function () {
-  setInitialState(function () {
-    updateTrackInfo()
-    setInitialTheme()
+document.addEventListener('DOMContentLoaded', () => {
+  setInitialState(() => {
+    updateTrackInfo();
+    setInitialTheme();
 
     // events
-    onClick(findEl('#open'), handleLogoClick)
-    onClick(findEl('#color-body'), changeColor)
-    onClick(findEl('#play-pause'), handlePlayOrPauseClick)
-    onClick(findEl('#previous'), function () {
-      execute('previous')
-    })
-    onClick(findEl('#next'), function () {
-      execute('next')
-    })
-    onClick(findEl('#show-lyrics'), fetchLyrics)
-  })
-})
+    onClick(findEl('#open'), handleLogoClick);
+    onClick(findEl('#color-body'), changeColor);
+    onClick(findEl('#play-pause'), handlePlayOrPauseClick);
+    onClick(findEl('#previous'), () => {
+      execute('previous');
+    });
+    onClick(findEl('#next'), () => {
+      execute('next');
+    });
+    onClick(findEl('#show-lyrics'), fetchLyrics);
+  });
+});
