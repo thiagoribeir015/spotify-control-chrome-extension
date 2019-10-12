@@ -6,24 +6,26 @@ const BACKEND_URL = 'https://spotify-lyrics.vaslyn.epi.codes';
 
 const selectors = {
   albumArt:
-    '#main .Root__now-playing-bar .now-playing-bar__left .cover-art-image.cover-art-image-loaded',
+    '#main .Root__now-playing-bar .now-playing-bar__left .cover-art-image',
   trackName: '.track-info__name a',
   artistName: '.track-info__artists a',
   playPauseBtn:
-    '#main .Root__now-playing-bar .now-playing-bar__center .player-controls__buttons button:nth-child(3)',
+    '#main .Root__now-playing-bar .now-playing-bar__center .player-controls__buttons button.control-button--circled',
   prevBtn:
-    '#main .Root__now-playing-bar .now-playing-bar__center .player-controls__buttons button:nth-child(2)',
+    '#main .Root__now-playing-bar .now-playing-bar__center .player-controls__buttons button.spoticon-skip-back-16',
   nextBtn:
-    '#main .Root__now-playing-bar .now-playing-bar__center .player-controls__buttons button:nth-child(4)',
+    '#main .Root__now-playing-bar .now-playing-bar__center .player-controls__buttons button.spoticon-skip-forward-16',
 };
 
 // utils
 function findEl(path) {
-  return document.querySelector(path);
+  return document.querySelector(path) || {}
 }
 
 function onClick(el, callback) {
-  return el.addEventListener('click', callback);
+  if (el) {
+    return el.addEventListener('click', callback)
+  }
 }
 
 const Chrome = {
