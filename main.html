@@ -5,24 +5,35 @@
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <script src="js/main.js"></script>
+    <!-- <script src="js/bundle.js"></script> -->
+    <link rel="stylesheet" href="https://use.typekit.net/xpc7ylj.css">
   </head>
 
   <body class="light" style="display:flex">
   	<div class="main flex">
       <div id="open" class="logo"></div>
-      <div class="player">
-        <div class="effect" id="background-album"></div>
-        <div class="album" id="album-art"></div>
+      <div id="container-lyrics" ></div>
+      <div class="player" style="display: none">
+        
+        
       </div>
-      <div class="track flex flex-1" id="current-track">
-        <div class="track-name">
-          <strong id="current-track-name"></strong>
-        </div>
-        <div class="track-artist">
-          <span id="current-track-artist"></span>
-        </div>
+      <div class="track flex flex-1" id="current-track" style="display: none">
+        
       </div>
       <div class="controller flex flex-1">
+        <div class="image-icon">
+            <!-- <div class="effect" id="background-album"></div> -->
+            <div class="album" id="album-art"></div>
+        </div>
+      
+        <div class="track-information">
+            <div class="track-name">
+                <strong id="current-track-name">TITLE</strong>
+            </div>
+            <div class="track-artist">
+                <span id="current-track-artist">AUTHOR</span>
+            </div>
+        </div>
         <div id="previous" class="controller__skip-back disabled">
           <span  class="glyphicon glyphicon-step-backward" aria-hidden="true"></span>
         </div>
@@ -34,10 +45,10 @@
         </div>
       </div>
       <div class="buttons">
-        <button id="color-body" class="btn-color-body" type="button"></button>
-        <button id="show-lyrics" type="button" class="show-lyrics-button">Lyrics</button>
+        <!-- <button id="color-body" class="btn-color-body" type="button"></button> -->
+        <!-- <button id="show-lyrics" type="button" class="show-lyrics-button">Lyrics</button> -->
       </div>
     </div>
-    <div id="container-lyrics" style="display:none"></div>
   </body>
 </html>
+ 

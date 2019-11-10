@@ -1,5 +1,5 @@
 .dark {
-  background: #1c1c1f;
+  background: #6565b3;
 }
 
 .ligh {
@@ -48,19 +48,19 @@
 }
 
 .effect {
-  width: 220px;
+  width: 50px;
   box-shadow: inset 0 0 70px #000000;
-  height: 220px;
+  height: 50px;
   display: block;
   filter: blur(5px);
   -webkit-filter: blur(5px);
 }
 .album {
   position: absolute;
-  top: 20px;
-  left: 20px;
-  width: 180px;
-  height: 180px;
+  top: 343px;
+  left: 11px;
+  width: 50px;
+  height: 50px;
   background-color: #F4F4F4;
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
 }
@@ -68,7 +68,10 @@
 .track {
   justify-content: center;
   flex-direction: column;
-  font: 12px/1.42 'Lucida Grande', Tahoma, sans-serif;
+  font-size: 60px/1.42;
+  font-family: proxima-nova,sans-serif;
+  font-weight: 700;
+  font-style: normal;
   direction: ltr;
   overflow: hidden;
   text-align: center;
@@ -85,15 +88,26 @@
 
 .track-artist {
     margin-top: 7px;
+    font-size: 15px;
+    font-family: proxima-nova,sans-serif;
+    font-weight: 700;
+    color: white;
+}
+
+.track-name {
+  font-size: 20px;
+  font-family: proxima-nova,sans-serif;
+  font-weight: 700;
+  color: white;
 }
 
 .dark .play {
   cursor: pointer;
   border-radius: 50%;
   position: relative;
-  color: #dfe0e6;
+  color: #ffffff;
   background: rgba(0, 0, 0, 0.2);
-  border: 2px solid #88898c;
+  border: 2px solid #ffffff;
   font-size: 24px;
   font-weight: 600;
   height: 50px;
@@ -129,12 +143,12 @@
 }
 
 .play:hover {
-  border-color: #84bd00;
+  border-color: #e7e7e7;
 }
 
 .dark .show-lyrics-button {
   background: transparent;
-  border: 2px solid #88898c;
+  border: 2px solid #ffffff;
   border-radius: 0 4px 4px 0;
   color: #dfe0e6;
   padding: 5px 15px;
@@ -152,7 +166,7 @@
 
 .dark .btn-color-body {
   background: transparent;
-  border: 2px solid #88898c;
+  border: 2px solid #ffffff;
   border-right: 0;
   border-radius: 4px 0 0 4px;
   color: #dfe0e6;
@@ -178,7 +192,7 @@
 
 .dark .buttons button:hover {
   color: #1c1c1f;
-  background: #88898c;
+  background: #ffffff;
 }
 
 .light .buttons button:hover {
@@ -186,10 +200,18 @@
   background: #444;
 }
 
+.track-information {
+  width: 170px;
+  margin-left: 45px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .controller {
   align-items: center;
   justify-content: space-between;
-  align-self: center;
+  align-self: flex-end;
   width: 100%;
   padding: 0 20px 0 20px;
 }
@@ -198,7 +220,7 @@
   font-size: 24px;
   display: flex;
   align-items: center;
-  color: #88898c;
+  color: #ffffff;
 }
 
 .light .controller__skip-back {
@@ -209,7 +231,7 @@
 }
 
 .dark .controller__skip-back:hover {
-  color: #EEE;
+  color: rgb(218, 218, 218);
 }
 
 .light .controller__skip-back:hover {
@@ -239,26 +261,36 @@
 }
 
 .green {
-  color: #84BD00!important;
+  color: rgb(255, 255, 255)!important;
 }
 
 .dark #container-lyrics {
-  font: 12px/1.42 'Lucida Grande', Tahoma, sans-serif;
+  font-size: 25px;
+  font-family: proxima-nova,sans-serif;
+  font-weight: 700;
+  font-style: normal;
   overflow-y: scroll;
   width: 350px;
-  max-height: 438px;
+  max-height: 250px;
+  height: 250px;
   margin: 15px 10px;
   white-space: pre-line;
   text-align: center;
   justify-content: center;
-  color: #88898c;
+  color: #ffffff;
 }
 
 .light #container-lyrics {
-  font: 12px/1.42 'Lucida Grande', Tahoma, sans-serif;
+  /* font: 12px/1.42 'Lucida Grande', Tahoma, sans-serif;
+   */
+  font-size: 50px;
+  font-family: proxima-nova,sans-serif;
+  font-weight: 700;
+  font-style: normal;
   overflow-y: scroll;
   width: 350px;
-  max-height: 438px;
+  max-height: 250px;
+  height: 250px;
   margin: 15px 10px;
   white-space: pre-line;
   text-align: center;

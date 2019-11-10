@@ -3,6 +3,7 @@ const ALBUMS_URL = 'https://open.spotify.com/collection/albums';
 const APP_PLAYER = 'document.getElementById("app-player").contentDocument';
 
 const BACKEND_URL = 'https://spotify-lyrics.vaslyn.epi.codes';
+const BACKGROUND_COLOR_PALLETE = ["#6565b3", "#2f80ed", "#e29587", "#20002c", "#c33764", "#a7bfe8", "#44a08d", "#b06ab3", "#4568dc", "#43c6ac", "#000c40", "#3494e6", "#fdb99b", "#ff7e5f", "#3a6186", "#89253e", "#2c3e50"]
 
 const selectors = {
   albumArt:
@@ -122,6 +123,7 @@ const Spotify = {
   },
 
   pause(tab, callback) {
+    // console.log(findEl("#container-lyrics").innerText);
     Spotify.click(
       {
         tab,
@@ -132,6 +134,7 @@ const Spotify = {
   },
 
   play(tab, callback) {
+
     Spotify.click(
       {
         tab,
@@ -139,9 +142,18 @@ const Spotify = {
       },
       callback,
     );
+
+    setTimeout(() => {
+      if (findEl("#container-lyrics").innerHTML === "") {
+        fetchLyrics();
+      }
+      
+    }, 2500);
   },
 
   previous(tab, callback) {
+    changeBackgroundColor();
+    let prevSongTitle = findEl('#current-track-name').innerHTML;
     Spotify.click(
       {
         tab,
@@ -149,9 +161,16 @@ const Spotify = {
       },
       callback,
     );
+    setTimeout(() => {
+      if (findEl('#current-track-name').innerHTML !== prevSongTitle) {
+        fetchLyrics();
+      }
+      
+    }, 2500);
   },
 
   next(tab, callback) {
+    changeBackgroundColor();
     Spotify.click(
       {
         tab,
@@ -159,6 +178,9 @@ const Spotify = {
       },
       callback,
     );
+    setTimeout(() => {
+      fetchLyrics();
+    }, 1500);
   },
 };
 
@@ -167,18 +189,18 @@ const App = {
     const bodyColor = theme === 'light' ? 'Dark' : 'Light';
 
     document.body.setAttribute('class', theme);
-    findEl('#color-body').innerHTML = bodyColor;
+    // findEl('#color-body').innerHTML = bodyColor;
   },
 };
 
 function changeColor() {
   if (document.body.className === 'light') {
     document.body.setAttribute('class', 'dark');
-    document.getElementById('color-body').innerHTML = 'Light';
+    // document.getElementById('color-body').innerHTML = 'Light';
     chrome.storage.sync.set({ color: 'dark' });
   } else {
     document.body.setAttribute('class', 'light');
-    document.getElementById('color-body').innerHTML = 'Dark';
+    // document.getElementById('color-body').innerHTML = 'Dark';
     chrome.storage.sync.set({ color: 'light' });
   }
 }
@@ -186,7 +208,7 @@ function changeColor() {
 function updateLyricsText(text) {
   const container = findEl('#container-lyrics');
   container.style.display = 'flex';
-  container.style.textAlign = 'justify';
+  container.style.textAlign = 'center';
   container.innerText = text;
 }
 
@@ -194,6 +216,8 @@ async function fetchLyrics() {
   // get artist and trackname
   const artist = findEl('#current-track-artist').innerHTML;
   const track = findEl('#current-track-name').innerHTML;
+
+  
 
   updateLyricsText('Loading...');
 
@@ -270,8 +294,8 @@ function togglePlayPause() {
 }
 
 function renderAlbumArt(albumArtURL) {
-  findEl('#background-album').style.background = `url(${albumArtURL})`;
-  findEl('#album-art').innerHTML = `<img src=${albumArtURL} style="width:180px; height:180px">`;
+  // findEl('#background-album').style.background = `url(${albumArtURL})`;
+  findEl('#album-art').innerHTML = `<img src=${albumArtURL} style="width:50px; height:50px">`;
 }
 
 function renderTrackName(name) {
@@ -361,6 +385,12 @@ function handleLogoClick() {
   return State.tabs.length ? Spotify.openTab(State.tabs) : Spotify.createTab();
 }
 
+function changeBackgroundColor() {
+  var randColor = BACKGROUND_COLOR_PALLETE[Math.floor(Math.random() * BACKGROUND_COLOR_PALLETE.length)];
+  document.body.style.background = randColor;
+  
+}
+
 function setInitialState(callback) {
   Spotify.getCurrentTab((tabs) => {
     State.tabs = tabs;
@@ -377,7 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // events
     onClick(findEl('#open'), handleLogoClick);
-    onClick(findEl('#color-body'), changeColor);
+    // onClick(findEl('#color-body'), changeColor);
     onClick(findEl('#play-pause'), handlePlayOrPauseClick);
     onClick(findEl('#previous'), () => {
       execute('previous');
@@ -385,6 +415,6 @@ document.addEventListener('DOMContentLoaded', () => {
     onClick(findEl('#next'), () => {
       execute('next');
     });
-    onClick(findEl('#show-lyrics'), fetchLyrics);
+    // onClick(findEl('#show-lyrics'), fetchLyrics);
   });
 });
