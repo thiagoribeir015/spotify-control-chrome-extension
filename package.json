@@ -1,6 +1,6 @@
 {
   "name": "spotify-control-chrome-extension",
-  "version": "1.0.0",
+  "version": "1.8.0",
   "description": "<a target=\"_blank\" href=\"http://chrome.google.com/webstore/detail/spotify-web-player-contro/cgmcneemfjgkibalfalgjgmfnajkmopd/\"><img alt=\"Try it now\" src=\"https://github.com/thiagoribeir015/spotify-control-chrome-extension/blob/master/assets/app-store-img.png?raw=true\" title=\"Click here to install this sample from the Chrome Web Store\"></img></a>",
   "main": "index.js",
   "scripts": {
