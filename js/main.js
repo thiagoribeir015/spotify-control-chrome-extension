@@ -2,13 +2,19 @@ const MAIN_URL = 'https://open.spotify.com/*';
 const ALBUMS_URL = 'https://open.spotify.com/collection/albums';
 const APP_PLAYER = 'document.getElementById("app-player").contentDocument';
 
-const BACKEND_URL = 'https://spotify-lyrics.vaslyn.epi.codes';
+// const BACKEND_URL = 'http://127.0.0.1:3000/api/lyrics'
+const BACKEND_URL = 'https://spotify-nextjs-server.t015.now.sh/api/lyrics'
 
 const selectors = {
   albumArt:
     '#main .Root__now-playing-bar .now-playing-bar__left .cover-art-image',
-  trackName: '.track-info__name a',
-  artistName: '.track-info__artists a',
+  
+  // trackName: '.track-info__name a',
+  trackName: '.now-playing span a[href^="/album/"]',
+
+  // artistName: '.track-info__artists a',
+  artistName: '.now-playing span a[href^="/artist/"]',
+
   playPauseBtn:
     '#main .Root__now-playing-bar .now-playing-bar__center .player-controls__buttons button.control-button--circled',
   prevBtn:
@@ -204,6 +210,7 @@ async function fetchLyrics() {
     body: JSON.stringify({ artist, track }),
     headers: {
       'Content-Type': 'application/json',
+      // 'Authorization': 'Bearer 9p5_Gp_MwcQ6x6p02qB_1Yf2et8148W844OyYTI6NFU7-gpjefagEKOtpTZYnQvz'
     },
   });
 
