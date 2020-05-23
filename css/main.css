@@ -21,6 +21,7 @@
 .main {
   flex-direction: column;
   align-items: center;
+  width: 220px;
 }
 
 .logo {
@@ -28,7 +29,7 @@
   cursor: pointer;
   width: 134px;
   background-size: cover !important;
-  margin: 10px 0;
+  margin: 5px 0;
   cursor: pointer;
 }
 
@@ -72,7 +73,7 @@
   direction: ltr;
   overflow: hidden;
   text-align: center;
-  margin: 10px 20px;
+  padding: 10px 10px;
 }
 
 .dark .track {
@@ -84,7 +85,7 @@
 }
 
 .track-artist {
-    margin-top: 7px;
+    margin-top: 3px;
 }
 
 .dark .play {
@@ -172,7 +173,7 @@
 
 .buttons {
   display: flex;
-  padding: 10px;
+  padding: 5px 10px;
   width: 100%;
 }
 
@@ -246,7 +247,8 @@
   font: 12px/1.42 'Lucida Grande', Tahoma, sans-serif;
   overflow-y: scroll;
   width: 350px;
-  max-height: 438px;
+  /* max-height: 438px; */
+  max-height: inherit;
   margin: 15px 10px;
   white-space: pre-line;
   text-align: center;
@@ -258,7 +260,8 @@
   font: 12px/1.42 'Lucida Grande', Tahoma, sans-serif;
   overflow-y: scroll;
   width: 350px;
-  max-height: 438px;
+  /* max-height: 438px; */
+  max-height: inherit;
   margin: 15px 10px;
   white-space: pre-line;
   text-align: center;
@@ -268,4 +271,23 @@
 
 button:focus {
   outline:0;
+}
+
+.search-input {
+  width: 100%;
+  padding: 5px 10px;
+  padding-top: 0px;
+}
+
+.light .search-input input {
+  border: 2px solid #444;
+}
+
+.search-input input {
+  border: 2px solid #585858;
+  border-radius: 4px;
+  width: 100%;
+  border: none;
+  height: 35px;
+  padding: 5px;
 }

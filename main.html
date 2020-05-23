@@ -1,43 +1,114 @@
 <!doctype html>
 <html>
-  <head>
-    <title>Spotify Web Player Control</title>
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="css/main.css">
-    <script src="js/main.js"></script>
-  </head>
 
-  <body class="light" style="display:flex">
-  	<div class="main flex">
-      <div id="open" class="logo"></div>
-      <div class="player">
-        <div class="effect" id="background-album"></div>
-        <div class="album" id="album-art"></div>
+<head>
+  <title>Spotify Web Player Control</title>
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="css/main.css">
+  <script src="js/main.js"></script>
+</head>
+
+<body class="light" style="display:flex;min-height: 460px;max-height: 575px;">
+  <div class="main flex">
+    <div id="open" class="logo"></div>
+    <div class="player">
+      <div class="effect" id="background-album"></div>
+      <div class="album" id="album-art"></div>
+    </div>
+    <div class="track flex flex-1" id="current-track">
+      <div class="track-name">
+        <strong id="current-track-name"></strong>
       </div>
-      <div class="track flex flex-1" id="current-track">
-        <div class="track-name">
-          <strong id="current-track-name"></strong>
-        </div>
-        <div class="track-artist">
-          <span id="current-track-artist"></span>
-        </div>
-      </div>
-      <div class="controller flex flex-1">
-        <div id="previous" class="controller__skip-back disabled">
-          <span  class="glyphicon glyphicon-step-backward" aria-hidden="true"></span>
-        </div>
-        <button id="play-pause" disabled="true" type="button" class="play">
-          <span class="glyphicon glyphicon-play"></span>
-        </button>
-        <div id="next" class="controller__skip-back disabled">
-          <span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>
-        </div>
-      </div>
-      <div class="buttons">
-        <button id="color-body" class="btn-color-body" type="button"></button>
-        <button id="show-lyrics" type="button" class="show-lyrics-button">Lyrics</button>
+      <div class="track-artist">
+        <span id="current-track-artist"></span>
       </div>
     </div>
-    <div id="container-lyrics" style="display:none"></div>
-  </body>
+    <div class="controller flex flex-1">
+      <div id="previous" class="controller__skip-back disabled">
+        <span class="glyphicon glyphicon-step-backward" aria-hidden="true"></span>
+      </div>
+      <button id="play-pause" disabled="true" type="button" class="play">
+        <span class="glyphicon glyphicon-play"></span>
+      </button>
+      <div id="next" class="controller__skip-back disabled">
+        <span class="glyphicon glyphicon-step-forward" aria-hidden="true"></span>
+      </div>
+    </div>
+    <div class="buttons">
+      <button id="color-body" class="btn-color-body" type="button"></button>
+      <button id="show-lyrics" type="button" class="show-lyrics-button">Lyrics</button>
+    </div>
+
+    <div class="search-input">
+      <input id="input" placeholder="Search and hit enter..."/>
+    </div>
+
+    <!-- buy me a beer btn -->
+    <style>
+      .bmc-button img {
+        height: 34px !important;
+        width: 35px !important;
+        margin-bottom: 1px !important;
+        box-shadow: none !important;
+        border: none !important;
+        vertical-align: middle !important;
+      }
+
+      .bmc-button {
+        justify-content: center;
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 5px 0px !important;
+        line-height: 35px !important;
+        /* height: 51px !important; */
+        text-decoration: none !important;
+        display: inline-flex !important;
+        align-items: center;
+        color: #FFFFFF !important;
+        background-color: #FF813F !important;
+        border-radius: 5px !important;
+        /* border: 1px solid transparent !important; */
+        /* padding: 7px 15px 7px 10px !important; */
+        font-size: 20px !important;
+        letter-spacing: 0.6px !important;
+        /* box-shadow: 0px 1px 2px rgba(190, 190, 190, 0.5) !important; */
+        /* -webkit-box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important; */
+        margin: 0 auto !important;
+        /* font-family: 'Arial', cursive !important; */
+        -webkit-box-sizing: border-box !important;
+        box-sizing: border-box !important;
+      }
+
+      .bmc-button:hover,
+      .bmc-button:active,
+      .bmc-button:focus {
+        text-decoration: none !important;
+        /* -webkit-box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important; */
+        /* box-shadow: 0px 1px 2px 2px rgba(190, 190, 190, 0.5) !important; */
+        opacity: 0.85 !important;
+        color: #FFFFFF !important;
+      }
+
+      .bmc-button-wrapper {
+        width: 100%;
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-bottom: 10px;
+      }
+    </style>
+    <!-- <link href="https://fonts.googleapis.com/css?family=Arial" rel="stylesheet"> -->
+    <div class='bmc-button-wrapper'>
+      <a 
+          class="bmc-button" 
+          target="_blank"
+          href="https://www.buymeacoffee.com/spotifyLyrics">
+            <img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy me a beer">
+            <span style="margin-left:5px;font-size:14px !important;line-height: 1;">Like it?<br/>Buy me a beer?</span>
+        </a>
+    </div>  
+
+  </div>
+  <div id="container-lyrics" style="display:none"></div>
+</body>
+
 </html>

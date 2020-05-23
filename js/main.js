@@ -1,5 +1,6 @@
 const MAIN_URL = "https://open.spotify.com/*";
 const ALBUMS_URL = "https://open.spotify.com/collection/albums";
+const SEARCH_URL = "https://open.spotify.com/search/";
 const APP_PLAYER = 'document.getElementById("app-player").contentDocument';
 
 // const BACKEND_URL = 'http://127.0.0.1:3000/api/lyrics'
@@ -53,8 +54,10 @@ const State = {
 };
 
 const Spotify = {
-  createTab() {
-    chrome.tabs.create({ url: ALBUMS_URL });
+  createTab(search) {
+    const url = search ? `${SEARCH_URL}${encodeURI(search)}` : ALBUMS_URL
+    
+    chrome.tabs.create({ url });
   },
 
   openTab() {
@@ -193,7 +196,7 @@ function changeColor() {
 function updateLyricsText(text) {
   const container = findEl("#container-lyrics");
   container.style.display = "flex";
-  container.style.textAlign = "justify";
+  // container.style.textAlign = "justify";
   container.innerText = text;
 }
 
@@ -373,6 +376,16 @@ function handleLogoClick() {
   return State.tabs.length ? Spotify.openTab(State.tabs) : Spotify.createTab();
 }
 
+function searchSpotify (e) {
+  console.log('searchSpotify', e.target.value)
+  
+  if(event.key === 'Enter') {
+    // return State.tabs.length ? Spotify.openTab(State.tabs) : Spotify.createTab();
+    return Spotify.createTab(e.target.value);
+  }
+
+}
+
 function setInitialState(callback) {
   Spotify.getCurrentTab((tabs) => {
     State.tabs = tabs;
@@ -398,5 +411,9 @@ document.addEventListener("DOMContentLoaded", () => {
       execute("next");
     });
     onClick(findEl("#show-lyrics"), fetchLyrics);
+
+    // 
+    findEl("#input").addEventListener("keyup", searchSpotify);
+    
   });
 });
